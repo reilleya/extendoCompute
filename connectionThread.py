@@ -44,6 +44,7 @@ class connectionThread():
 		self.threadMan.logEvent("[Connection"+str(self.threadID)+"] Closing")
 		self.exiting = True
 		self.conn.send(["exit"])
+		time.sleep(0.5) #Fix the problems with clients trying to reconnect?
 		self.conn.close()
 		self.threadMan.deleteThread(self.threadID)
 		
