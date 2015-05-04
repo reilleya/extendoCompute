@@ -8,6 +8,7 @@ def controllerClientHandler(conn, addr):
 	while not exiting:
 		req = conn.recv()
 		if req[0] == "stop":
+			manager.logEvent("[Controller] Shutting server down now!")
 			exiting = True
 		if req[0] == "info":
 			cl = []
@@ -15,9 +16,10 @@ def controllerClientHandler(conn, addr):
 				cl.append(c.generateStatusString())
 			conn.send([cl, manager.log])
 		if req[0] == "program":
+			manager.logEvent("[Controller] Sent new program "+req[1]+" from "+addr+", distributing...")
 			manager.distribNewProgram(req[1], req[2])
 		if req[0] == "run":
-			manager.logEvent("[Controller] Shutting server down now!")
+			manager.logEvent("[Controller] Controller ordered program to run")
 			manager.run()
 		if req[0] == "close":
 			break
