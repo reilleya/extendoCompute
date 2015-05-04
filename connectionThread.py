@@ -8,6 +8,7 @@ class connectionThread():
 		self.threadID = ID
 		self.programName = None
 		self.state = "idle"
+		self.tasks = []
 		self.conn = connection
 		self.exiting = False
 		self.thread = threading.Thread(target=self.handleClient, args=())
@@ -27,6 +28,12 @@ class connectionThread():
 				break
 			if d[0] == "close":
 				self.exit()
+			
+			if d[0] == "state":
+				self.state = d[1]
+				
+			if d[0] == "results":
+				self.threadMan.reportResults(d[1])
 			
 		self.conn.close()
 				
@@ -60,4 +67,9 @@ class connectionThread():
 			self.threadMan.logEvent("[Connection"+str(self.threadID)+"] No program to start")
 			
 	def assignTasks(self, tasks):
+		self.tasks = tasks
 		self.conn.send(["tasks", tasks, "r"])
+	
+	def addTasks(self, tasks):
+		self.tasks += tasks
+		self.conn.send(["tasks", tasks, "a"])

@@ -14,6 +14,7 @@ while i!="exit":
 		conn.send(["stop"])
 		print "Shutting extendoCompute down"
 		sys.exit()
+		
 	if i=="info":
 		conn.send(["info"])
 		d = conn.recv()
@@ -28,14 +29,17 @@ while i!="exit":
 		print str(len(d[0]))+" active connection"+("s"*(len(d[0])!=1))+(":"*(len(d[0])!=0))
 		for ct in d[0]:
 			print "\t"+ct
+			
 	if i[0:4] == "prog":
 		loc = i.split(" ")[1]
 		n = loc.split("/")[-1]
 		f = open(loc, "r")
 		c = f.read()
 		conn.send(["program", n,c])
+		
 	if i[0:3] == "run":
 		conn.send(["run"])
+		
 	if i[0:4] == "disc":
 		conn.send(["disc", int(i.split(" ")[1])])
 		res = conn.recv()
@@ -43,6 +47,12 @@ while i!="exit":
 			print "Attempted to close a non-existent connection"
 		else:
 			print "Closed connection #"+str(res)
+	
+	if i[0:3] == "res":
+		conn.send(["results"])
+		res = conn.recv()
+		print res
+	
 	i = raw_input(">")
 	
 conn.send(["close"])

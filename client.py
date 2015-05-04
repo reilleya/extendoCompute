@@ -5,17 +5,16 @@ def runProg():
 	global state, ctask
 	while running:
 		if state == "running":
-			for task in tasks:
 				print "Running task "+str(ctask)+"/"+str(ntasks)
 				print "\t Task inputs: "+str(task)
 				exec prog
-				results.append(result)
-				tasks.remove(task)
+				results.append([task, result])
 				ctask+=1
-			if len(tasks) == 0:
-				state = "idle"
-				print "All done with tasks"
-				print "Results: "+str(results)
+		
+			state = "idle"
+			print "All done with tasks"
+			print "Results: "+str(results)
+			conn.send(["results", results])
 	
 ip = raw_input("IP>")
 if ip=="":

@@ -1,5 +1,6 @@
 import sys, os, threading, time, connectionThread
 from multiprocessing.connection import Listener, Client
+import random
 
 bindIP = "192.168.3.162"
 
@@ -11,6 +12,8 @@ class threadManager():
 		self.exiting = False
 		
 		self.log = []
+		
+		self.results = []
 		
 		self.listener = Listener((bindIP, 2424), authkey="password")
 		self.listenThread = threading.Thread(target=self.listen, args=())
@@ -45,7 +48,10 @@ class threadManager():
 	def run(self):
 		self.logEvent(" Instructing all clients to run assigned program")
 		for k,thd in self.activeThreads.items():
-			thd.assignTasks([[1],[2],[2],[32],[32],[3],[2],[32],[32],[32],[32],[23]])
+			tempTasks = []
+			for i in range(0, random.randint(5,10)):
+				tempTasks.append([random.randint(1,50)])
+			thd.assignTasks(tempTasks)
 			thd.run()
 	
 	def exit(self):
@@ -62,3 +68,6 @@ class threadManager():
 		self.logEvent(" Setting all clients to program "+name+ " of length " + str(len(prog)))
 		for k,thd in self.activeThreads.items():
 			thd.newProgram(name, prog)
+			
+	def reportResults(self, results):
+		self.results += results

@@ -28,6 +28,8 @@ def controllerClientHandler(conn, addr):
 			else:
 				manager.logEvent("[Controller] Attempted to end non-existent connection #"+str(req[1]))
 				conn.send(-1)
+		if req[0] == "results":
+			conn.send(manager.results)
 	manager.logEvent("[Controller] Closed controller connection with "+addr)
 	conn.send("exit")
 	conn.close()
