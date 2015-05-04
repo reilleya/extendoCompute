@@ -2,6 +2,7 @@ from multiprocessing.connection import Client
 import threading
 
 def runProg():
+	global state
 	while running:
 		if state == "running":
 			for task in tasks:
