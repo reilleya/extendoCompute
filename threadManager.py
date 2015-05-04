@@ -45,6 +45,7 @@ class threadManager():
 	def run(self):
 		self.logEvent(" Instructing all clients to run assigned program")
 		for k,thd in self.activeThreads.items():
+			thd.assignTasks([[1],[2],[2],[32],[32],[3],[2],[32],[32],[32],[32],[23]])
 			thd.run()
 	
 	def exit(self):

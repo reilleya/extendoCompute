@@ -57,3 +57,6 @@ class connectionThread():
 			self.threadMan.logEvent("[Connection"+str(self.threadID)+"] Program started")
 		else:
 			self.threadMan.logEvent("[Connection"+str(self.threadID)+"] No program to start")
+			
+	def assignTasks(self, tasks):
+		self.conn.send(["tasks", tasks, "r"])

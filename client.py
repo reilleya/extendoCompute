@@ -6,11 +6,15 @@ def runProg():
 	while running:
 		if state == "running":
 			for task in tasks:
+				print "Running task "+str(ctask)+"/"+str(ntasks)
+				print "\t Task inputs: "+str(task)
 				exec prog
-				
+				results.append(result)
 				tasks.remove(task)
 			if len(tasks) == 0:
 				state = "idle"
+				print "All done with tasks"
+				print "Results: "+str(results)
 		
 ip = raw_input("IP>")
 if ip=="":
@@ -24,10 +28,11 @@ state = "idle"
 progname = ""
 prog = ""
 
+ntasks = 0
 ctask = 0
 tasks = []
 cres = None
-results = {}
+results = []
 
 threading.Thread(target = runProg).start()
 
@@ -56,7 +61,8 @@ while running:
 			tasks+=d[1]
 		if d[2] == "r":
 			tasks=d[1] #Probably need to alert the other thread about this somehow
+		ntasks = len(tasks)
 		
 	if d[0] == "run":
-		print "Running program "+progname
-		exec prog
+		print "Setting state to run"
+		state = "running"
