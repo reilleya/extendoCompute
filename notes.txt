@@ -1,0 +1,2 @@
+Command syntax:
+	["run"] -> ["run"]
