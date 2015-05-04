@@ -1,21 +1,6 @@
 from multiprocessing.connection import Client
 import threading
-
-def runProg():
-	global state
-	while running:
-		if state == "running":
-			for task in tasks:
-				print "Running task "+str(ctask)+"/"+str(ntasks)
-				print "\t Task inputs: "+str(task)
-				exec prog
-				results.append(result)
-				tasks.remove(task)
-			if len(tasks) == 0:
-				state = "idle"
-				print "All done with tasks"
-				print "Results: "+str(results)
-		
+	
 ip = raw_input("IP>")
 if ip=="":
 	ip = "192.168.3.162"
@@ -29,10 +14,26 @@ progname = ""
 prog = ""
 
 ntasks = 0
-ctask = 0
+ctask = 1
 tasks = []
 cres = None
 results = []
+
+def runProg():
+	global state, cstask
+	while running:
+		if state == "running":
+			for task in tasks:
+				print "Running task "+str(ctask)+"/"+str(ntasks)
+				print "\t Task inputs: "+str(task)
+				exec prog
+				results.append(result)
+				tasks.remove(task)
+				ctask+=1
+			if len(tasks) == 0:
+				state = "idle"
+				print "All done with tasks"
+				print "Results: "+str(results)
 
 threading.Thread(target = runProg).start()
 
