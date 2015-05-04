@@ -1,6 +1,22 @@
 from multiprocessing.connection import Client
 import threading
 	
+def runProg():
+	global state, ctask
+	while running:
+		if state == "running":
+			for task in tasks:
+				print "Running task "+str(ctask)+"/"+str(ntasks)
+				print "\t Task inputs: "+str(task)
+				exec prog
+				results.append(result)
+				tasks.remove(task)
+				ctask+=1
+			if len(tasks) == 0:
+				state = "idle"
+				print "All done with tasks"
+				print "Results: "+str(results)
+	
 ip = raw_input("IP>")
 if ip=="":
 	ip = "192.168.3.162"
@@ -19,22 +35,6 @@ tasks = []
 cres = None
 results = []
 
-def runProg():
-	global state, cstask
-	while running:
-		if state == "running":
-			for task in tasks:
-				print "Running task "+str(ctask)+"/"+str(ntasks)
-				print "\t Task inputs: "+str(task)
-				exec prog
-				results.append(result)
-				tasks.remove(task)
-				ctask+=1
-			if len(tasks) == 0:
-				state = "idle"
-				print "All done with tasks"
-				print "Results: "+str(results)
-
 threading.Thread(target = runProg).start()
 
 while running:
@@ -42,10 +42,11 @@ while running:
 		d = conn.recv()
 
 	except:
-		print "Connection error! Retrying..." 
-		conn = Client((ip,2424), authkey="password")
-		print "Connection regained!"
-		continue
+		if running:
+			print "Connection error! Retrying..." 
+			conn = Client((ip,2424), authkey="password")
+			print "Connection regained!"
+			continue
 		
 	if d[0] == "exit":
 		print "Exiting"
