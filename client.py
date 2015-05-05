@@ -5,6 +5,7 @@ def runProg():
 	global state, ctask
 	while running:
 		if state == "running":
+			for task in tasks: #will this be OK if more tasks are added mid-loop
 				print "Running task "+str(ctask)+"/"+str(ntasks)
 				print "\t Task inputs: "+str(task)
 				exec prog
