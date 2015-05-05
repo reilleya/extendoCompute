@@ -13,6 +13,7 @@ class threadManager():
 		
 		self.log = []
 		
+		self.iterations = 0
 		self.results = []
 		
 		self.listener = Listener((bindIP, 2424), authkey="password")
@@ -49,7 +50,7 @@ class threadManager():
 		self.logEvent(" Instructing all clients to run assigned program")
 		for k,thd in self.activeThreads.items():
 			tempTasks = []
-			for i in range(0, random.randint(5,10)):
+			for i in range(0, self.iterations):
 				tempTasks.append([random.randint(1,50)])
 			thd.assignTasks(tempTasks)
 			thd.run()
@@ -71,3 +72,6 @@ class threadManager():
 			
 	def reportResults(self, results):
 		self.results += results
+		
+	def setIterations(self, iters):#make a general function for this sort of thing!
+		self.iterations = iters

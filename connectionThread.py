@@ -33,6 +33,7 @@ class connectionThread():
 				self.state = d[1]
 				
 			if d[0] == "results":
+				self.threadMan.logEvent("[Connection"+str(self.threadID)+"] Received results from "+str(len(d[1]))+" tasks from client")
 				self.threadMan.reportResults(d[1])
 			
 		self.conn.close()

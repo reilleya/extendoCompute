@@ -52,6 +52,10 @@ while i!="exit":
 		conn.send(["results"])
 		res = conn.recv()
 		print res
+		
+	if i[0:5] == "iters":
+		conn.send(["iterations", int(i.split(" ")[1])])
+		print "Set iteration count to "+i.split(" ")[1]
 	
 	i = raw_input(">")
 	
