@@ -42,9 +42,9 @@ class connectionThread():
 		ss = "#"+str(self.threadID)+": Addr="+self.address[0]+", Prog="+str(self.programName)+","
 		if self.state == "idle":
 			ss += " Idle"
-		if self.state == "running":
-			ss += "Running, iteration"
-		if self.state == "done":
+		elif self.state == "running":
+			ss += " Running, iteration "
+		elif self.state == "done":
 			ss += "Done"
 		return ss
 	

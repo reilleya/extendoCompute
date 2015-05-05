@@ -1,11 +1,17 @@
 from multiprocessing.connection import Client
-import threading
+import threading, time
 	
-def runProg():
+def statusThread():
 	global state, ctask
 	while running:
+		conn.send(["state", state, ctask])
+		time.sleep(0.1)
+	
+def runProg():
+	global state, ctask, results
+	while running:
 		if state == "running":
-			for task in tasks: #will this be OK if more tasks are added mid-loop
+			for task in tasks: #will this be OK if more tasks are added mid-loop?
 				print "Running task "+str(ctask)+"/"+str(ntasks)
 				print "\t Task inputs: "+str(task)
 				exec prog
@@ -16,6 +22,7 @@ def runProg():
 			print "All done with tasks"
 			print "Results: "+str(results)
 			conn.send(["results", results])
+			results = []
 	
 ip = raw_input("IP>")
 if ip=="":
@@ -36,6 +43,7 @@ cres = None
 results = []
 
 threading.Thread(target = runProg).start()
+threading.Thread(target = statusThread).start()
 
 while running:
 	try:
