@@ -1,4 +1,4 @@
-import os, sys
+import os, sys, pickle
 from multiprocessing.connection import Client
 
 ip = raw_input("IP>")
@@ -50,8 +50,19 @@ while i!="exit":
 	
 	if i[0:3] == "res":
 		conn.send(["results"])
-		res = conn.recv()
-		print res
+		if i[4] == "s":
+			if i[6] == "l":
+				res = conn.recv()
+				f = open(i[8:], "w")
+				pickle.dump(res, f)
+				f.close()
+				print "Wrote results to "+i[8:]
+			if i[6] == "r":
+				conn.send(["saveresults", i[8:]])
+				print "Saving results to "+ i[8:]+" on the server"
+		if i[4] == "d":
+			res = conn.recv()
+			print res
 		
 	if i[0:5] == "iters":
 		conn.send(["iterations", int(i.split(" ")[1])])

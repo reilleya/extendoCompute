@@ -1,4 +1,4 @@
-import sys, os, threading, time, connectionThread
+import sys, os, threading, time, connectionThread, pickle
 from multiprocessing.connection import Listener, Client
 import random
 
@@ -75,3 +75,8 @@ class threadManager():
 		
 	def setIterations(self, iters):#make a general function for this sort of thing!
 		self.iterations = iters
+		
+	def saveResults(self, location):
+		f = open(location, "w")
+		pickle.dump(self.results, f)
+		f.close()

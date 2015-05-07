@@ -34,6 +34,9 @@ def controllerClientHandler(conn, addr):
 			conn.send(manager.results)
 		if req[0] == "iterations":
 			manager.setIterations(req[1])
+		if req[0] == "saveresults":
+			manager.saveResults(req[1])
+			
 	manager.logEvent("[Controller] Closed controller connection with "+addr)
 	conn.send("exit")
 	conn.close()
