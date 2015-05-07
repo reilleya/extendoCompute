@@ -13,6 +13,7 @@ class threadManager():
 		
 		self.log = []
 		
+		self.batchSize = 1
 		self.iterations = 0
 		self.results = []
 		
@@ -80,3 +81,6 @@ class threadManager():
 		f = open(location, "w")
 		pickle.dump(self.results, f)
 		f.close()
+		
+	def setBatchSize(self, batchsize):
+		self.batchSize = batchsize
