@@ -49,9 +49,9 @@ while i!="exit":
 			print "Closed connection #"+str(res)
 	
 	if i[0:3] == "res":
-		conn.send(["results"])
 		if i[4] == "s":
 			if i[6] == "l":
+				conn.send(["results"])
 				res = conn.recv()
 				f = open(i[8:], "w")
 				pickle.dump(res, f)
@@ -61,6 +61,7 @@ while i!="exit":
 				conn.send(["saveresults", i[8:]])
 				print "Saving results to "+ i[8:]+" on the server"
 		if i[4] == "d":
+			conn.send(["results"])
 			res = conn.recv()
 			print res
 		
@@ -71,6 +72,50 @@ while i!="exit":
 	if i[0:5] == "batch":
 		conn.send(["batchsize", int(i.split(" ")[1])])
 		print "Set batch size to "+i.split(" ")[1]
+		
+	if i[0:8] == "newInput":
+		args = i[9:]
+		name = args[:args.index(" ")]
+		rawvalues = args[args.index(" ")+1:]
+		values = []
+		if rawvalues[0] == "[":
+			vals = rawvalues[1:-1].split(",")
+			for val in vals:
+				try:
+					values.append(float(val))
+				except:
+					if "-" in val:
+						parts = val.split("-")
+						try:
+							start = int(parts[0])
+							end = int(parts[1])
+							values += range(start, end+1)
+						except:
+							values.append(val)
+					else:
+						values.append(val)
+		elif rawvalues[0] == '"' or rawvalues[0] == "'":
+			exec "values = "+rawvalues[1:-1]
+		else:
+			try:
+				values = float(rawvalues)
+			except:
+				values = rawvalues
+		conn.send(["newInput", name, values])
+		
+	if i[0:8] == "delInput":
+		name = i[9:]
+		conn.send(["delInput", name])
+		
+	if i[0:6] == "inputs":
+		conn.send(["inputs"])
+		res = conn.recv()
+		print "Active inputs:"
+		for name,values in res.items():
+			print "\t"+name+": "+str(values)
+			
+	if i[0:8] == "genTasks":
+		conn.send(["genTasks"])
 	
 	i = raw_input(">")
 	

@@ -10,34 +10,62 @@ def controllerClientHandler(conn, addr):
 		if req[0] == "stop":
 			manager.logEvent("[Controller] Shutting server down now!")
 			exiting = True
+			
 		if req[0] == "info":
 			cl = []
 			for k,c in manager.activeThreads.items():
 				cl.append(c.generateStatusString())
-			conn.send([cl, manager.log])
+			conn.send([cl, manager.log, manager.inputs])
+			
 		if req[0] == "program":
 			manager.logEvent("[Controller] Sent new program "+req[1]+" from "+addr+", distributing...")
 			manager.distribNewProgram(req[1], req[2])
+			
 		if req[0] == "run":
 			manager.logEvent("[Controller] Controller ordered program to run")
 			manager.run()
+			
 		if req[0] == "close":
 			break
+			
 		if req[0] == "disc":
 			if req[1] in manager.activeThreads: #Move this logic into the function itself?
+				manager.logEvent("[Controller] Ending connection #"+str(req[1]))
 				manager.endThread(req[1])
 				conn.send(req[1])
 			else:
 				manager.logEvent("[Controller] Attempted to end non-existent connection #"+str(req[1]))
 				conn.send(-1)
+				
 		if req[0] == "results":
+			manager.logEvent("[Controller] Sending results to controller")
 			conn.send(manager.results)
+			
 		if req[0] == "iterations":
+			manager.logEvent("[Controller] Setting iteration count to "+str(req[1]))
 			manager.setIterations(req[1])
+			
 		if req[0] == "saveresults":
+			manager.logEvent("[Controller] Saving results locally as "+str(req[1]))
 			manager.saveResults(req[1])
+			
 		if req[0] == "batchsize":
+			manager.logEvent("[Controller] Setting batch size to "+str(req[1]))
 			manager.setBatchSize(req[1])
+			
+		if req[0] == "newInput":
+			manager.logEvent("[Controller] Adding a new input called "+req[1]+ " with values of "+str(req[2]))
+			manager.addInput(req[1], req[2])
+			
+		if req[0] == "delInput":
+			manager.logEvent("[Controller] Deleting input named "+req[1])
+			manager.deleteInput(req[1])
+			
+		if req[0] == "inputs":
+			conn.send(manager.inputs)
+			
+		if req[0] == "genTasks":
+			manager.generateTasks()
 			
 	manager.logEvent("[Controller] Closed controller connection with "+addr)
 	conn.send("exit")

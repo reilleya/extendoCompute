@@ -1,2 +1,7 @@
 Command syntax:
 	["run"] -> ["run"]
+	
+[1-5, 10, 12, 15, "cat", "dog"] -> [1,2,3,4,5,10,12,15,"cat","dog"]
+1 -> 1
+dog -> "dog"
+"range(0,110)" -> exec "values = "+"range(0,110)"

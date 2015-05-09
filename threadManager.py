@@ -13,8 +13,13 @@ class threadManager():
 		
 		self.log = []
 		
-		self.batchSize = 1
 		self.iterations = 0
+		self.inputs = {}
+		self.tasks = []
+		
+		self.batchSize = 1
+		self.batches = []
+		
 		self.results = []
 		
 		self.listener = Listener((bindIP, 2424), authkey="password")
@@ -52,7 +57,7 @@ class threadManager():
 		for k,thd in self.activeThreads.items():
 			tempTasks = []
 			for i in range(0, self.iterations):
-				tempTasks.append([random.randint(1,50)])
+				tempTasks.append({"in":random.randint(1,50)})
 			thd.assignTasks(tempTasks)
 			thd.run()
 	
@@ -84,3 +89,20 @@ class threadManager():
 		
 	def setBatchSize(self, batchsize):
 		self.batchSize = batchsize
+		
+	def addInput(self, name, values):
+		self.logEvent(" Added or changed input '"+name+"' to have value(s) of "+str(values))
+		self.inputs[name] = values
+		
+	def deleteInput(self, name):
+		if name in self.inputs:
+			self.logEvent(" Deleting input '"+name+"'")
+			del self.inputs[name]
+		else:
+			self.logEvent(" No input called "+name)
+			
+	def generateTasks(self):
+		ntasks = 1
+		for name,values in self.inputs.items():
+			ntasks *= len(values)
+		print ntasks
