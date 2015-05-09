@@ -4,7 +4,7 @@ import threading, time
 def statusThread():
 	global state, ctask
 	while running:
-		conn.send(["state", state, ctask])
+		conn.send(["state", state, ctask, len(tasks)])
 		time.sleep(0.1)
 	
 def runProg():
@@ -20,7 +20,8 @@ def runProg():
 		
 			state = "idle"
 			print "All done with tasks"
-			print "Results: "+str(results)
+			ctask = 0
+			#print "Results: "+str(results)
 			conn.send(["results", results])
 			results = []
 	

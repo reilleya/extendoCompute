@@ -56,7 +56,7 @@ def controllerClientHandler(conn, addr):
 			manager.setBatchSize(req[1])
 			
 		if req[0] == "newInput":
-			manager.logEvent("[Controller] Adding a new input called "+req[1]+ " with values of "+str(req[2]))
+			manager.logEvent("[Controller] Adding a new input called "+req[1]+ " with "+str(len(req[2]))+" different values")
 			manager.addInput(req[1], req[2])
 			
 		if req[0] == "delInput":
@@ -91,7 +91,9 @@ exiting = False
 listener = Listener((bindIP, 7777), authkey="password")
 threading.Thread(target=controllerListener).start()
 
+print "in"
 manager = threadManager.threadManager()
+print "out"
 
 while not exiting:
 	buff = ""
@@ -109,6 +111,15 @@ while not exiting:
 	buff += str(len(manager.activeThreads))+" active connection"+("s"*(len(manager.activeThreads)!=1))+(":"*(len(manager.activeThreads)!=0))+"\n"
 	for id,ct in manager.activeThreads.items():
 		buff += "\t"+ct.generateStatusString()+"\n"
+	buff += ("-"*114)+"\n"
+	buff += "Program Info:\n"
+	buff += "\tName: "+(manager.progName*(manager.progName!=""))+("N/A"*(manager.progName==""))+"\n"
+	if manager.running:
+		buff += "\tRunning:\n"
+		buff += "\tResults: "+str(len(manager.results))+"/"+str(len(manager.tasks))+"\n"
+		#buff += "\tBatch States: "+str(manager.batchStates)+"\n"
+	else:
+		buff += "\tNot running\n"
 	buff += ("="*114)+"\n"
 	buff += ("="*114)+"\n"
 	os.system("cls")

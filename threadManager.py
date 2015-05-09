@@ -10,8 +10,14 @@ class threadManager():
 		self.nextConnID = 0
 		
 		self.exiting = False
+		self.running = False
 		
 		self.log = []
+		
+		self.logEvent(" Thread Manager starting")
+		
+		self.prog = ""
+		self.progName = ""
 		
 		self.iterations = 1
 		self.inputs = {}
@@ -19,15 +25,34 @@ class threadManager():
 		
 		self.batchSize = 1
 		self.batches = []
+		self.batchStates = []
 		
 		self.results = []
 		
 		self.listener = Listener((bindIP, 2424), authkey="password")
 		self.listenThread = threading.Thread(target=self.listen, args=())
 		self.listenThread.start()
+		
+		self.updateThread = threading.Thread(target=self.update)
+		self.updateThread.start()
+		self.logEvent(" Thread Manager started")
 	
 	def update(self):
-		pass
+		while not self.exiting:
+			if self.running:
+				for ctn in range(0, len(self.activeThreads)):
+					if self.activeThreads[ctn].state == "idle":
+						self.logEvent(" "+str(ctn)+" is idle!")
+						for bsn in range(0, len(self.batchStates)):
+							if self.batchStates[bsn][0] == "waiting":
+								self.batchStates[bsn] = ["calc", ctn]
+								self.activeThreads[ctn].assignTasks(self.batches[bsn])
+								self.activeThreads[ctn].run()
+								break
+				
+				if len(self.results) == len(self.tasks):
+					self.logEvent(" All results received, done running")
+					self.running = False
 		
 	def listen(self):
 		while not self.exiting: 
@@ -53,13 +78,20 @@ class threadManager():
 		self.log.append("["+time.strftime("%c")+"]"+str(event))
 	
 	def run(self):
-		self.logEvent(" Instructing all clients to run assigned program")
-		for k,thd in self.activeThreads.items():
-			tempTasks = []
-			for i in range(0, self.iterations):
-				tempTasks.append({"in":random.randint(1,50)})
-			thd.assignTasks(tempTasks)
-			thd.run()
+		if not self.running:
+			self.logEvent(" Instructing all clients to run assigned program")
+			self.batchStates = []
+			for b in self.batches:
+				self.batchStates.append(["waiting"])
+			self.running = True
+		else:
+			self.logEvent(" Already running")
+			#for k,thd in self.activeThreads.items():
+			#	tempTasks = []
+			#	for i in range(0, self.iterations):
+			#		tempTasks.append({"in":random.randint(1,50)})
+			#	thd.assignTasks(tempTasks)
+			#	thd.run()
 	
 	def exit(self):
 		self.exiting = True
@@ -72,12 +104,17 @@ class threadManager():
 		print "\tDone."
 		
 	def distribNewProgram(self, name, prog):
+		self.prog = prog
+		self.progName = name
 		self.logEvent(" Setting all clients to program "+name+ " of length " + str(len(prog)))
 		for k,thd in self.activeThreads.items():
 			thd.newProgram(name, prog)
 			
-	def reportResults(self, results):
+	def reportResults(self, results, threadID):
 		self.results += results
+		for bsn in range(0, len(self.batches)):
+			if self.batchStates[bsn][0] == "calc" and self.batchStates[bsn][1] == threadID:
+				self.batchStates[bsn][0] = "complete"
 		
 	def setIterations(self, iters):#make a general function for this sort of thing!
 		self.iterations = iters
@@ -91,7 +128,7 @@ class threadManager():
 		self.batchSize = batchsize
 		
 	def addInput(self, name, values):
-		self.logEvent(" Added or changed input '"+name+"' to have value(s) of "+str(values))
+		self.logEvent(" Added or changed input '"+name+"' to have "+str(len(values))+" different value(s)")
 		self.inputs[name] = values
 		
 	def deleteInput(self, name):

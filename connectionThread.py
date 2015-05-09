@@ -8,6 +8,7 @@ class connectionThread():
 		self.threadID = ID
 		self.programName = None
 		self.state = "idle"
+		self.ctask = 0
 		self.tasks = []
 		self.conn = connection
 		self.exiting = False
@@ -31,10 +32,11 @@ class connectionThread():
 			
 			if d[0] == "state":
 				self.state = d[1]
+				self.ctask = d[2]
 				
 			if d[0] == "results":
 				self.threadMan.logEvent("[Connection"+str(self.threadID)+"] Received results from "+str(len(d[1]))+" tasks from client")
-				self.threadMan.reportResults(d[1])
+				self.threadMan.reportResults(d[1], self.threadID)
 			
 		self.conn.close()
 				
@@ -43,7 +45,7 @@ class connectionThread():
 		if self.state == "idle":
 			ss += " Idle"
 		elif self.state == "running":
-			ss += " Running, iteration "
+			ss += " Running, task " + str(self.ctask) + " of " + str(len(self.tasks))
 		elif self.state == "done":
 			ss += "Done"
 		return ss
@@ -63,6 +65,7 @@ class connectionThread():
 	def run(self):
 		if self.programName != None:
 			self.conn.send(["run"])
+			self.state = "running" #ugly hack to make sure we don't get too many tasks at once
 			self.threadMan.logEvent("[Connection"+str(self.threadID)+"] Program started")
 		else:
 			self.threadMan.logEvent("[Connection"+str(self.threadID)+"] No program to start")
