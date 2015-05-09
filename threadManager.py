@@ -102,7 +102,29 @@ class threadManager():
 			self.logEvent(" No input called "+name)
 			
 	def generateTasks(self):
+		self.tasks=[]
+		counts = {}
+		order = []
+		for i in self.inputs:
+			counts[i] = 0
+			order.append(i)
 		ntasks = 1
 		for name,values in self.inputs.items():
 			ntasks *= len(values)
-		print ntasks
+		for it in range(0, ntasks):
+			self.tasks.append({})
+			for name,values in self.inputs.items():
+				self.tasks[-1][name] = self.inputs[name][counts[name]]
+			counts[order[0]]+=1
+			for i in range(0, len(self.inputs)):
+				for n,c in counts.items():
+					if c == len(self.inputs[n]):
+						if order.index(n)+1 != len(order):
+							counts[order[order.index(n)+1]]+=1
+						counts[n] = 0
+		iterTasks = []
+		for t in self.tasks:
+			for i in range(0, self.iterations):
+				iterTasks.append(t)
+		self.tasks = iterTasks
+		self.logEvent(" Generated "+str(len(self.tasks))+" tasks")

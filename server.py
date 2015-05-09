@@ -3,6 +3,8 @@ from multiprocessing.connection import Listener, Client
 
 bindIP = "192.168.3.162"
 
+sys.stderr = open('errors.txt','w')
+
 def controllerClientHandler(conn, addr):
 	global exiting
 	while not exiting:
@@ -115,4 +117,6 @@ print "Done."
 print "Closing controller listener..."
 conn = Client((bindIP,7777), authkey="password")
 print "Done."
+sys.stderr.close()
+sys.stderr = sys.__stderr__
 print "Exiting..."

@@ -82,7 +82,7 @@ while i!="exit":
 			vals = rawvalues[1:-1].split(",")
 			for val in vals:
 				try:
-					values.append(float(val))
+					values.append([float(val)])
 				except:
 					if "-" in val:
 						parts = val.split("-")
@@ -91,16 +91,16 @@ while i!="exit":
 							end = int(parts[1])
 							values += range(start, end+1)
 						except:
-							values.append(val)
+							values.append([val])
 					else:
-						values.append(val)
+						values.append([val])
 		elif rawvalues[0] == '"' or rawvalues[0] == "'":
 			exec "values = "+rawvalues[1:-1]
 		else:
 			try:
-				values = float(rawvalues)
+				values = [float(rawvalues)]
 			except:
-				values = rawvalues
+				values = [rawvalues]
 		conn.send(["newInput", name, values])
 		
 	if i[0:8] == "delInput":
