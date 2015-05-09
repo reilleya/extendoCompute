@@ -13,7 +13,7 @@ class threadManager():
 		
 		self.log = []
 		
-		self.iterations = 0
+		self.iterations = 1
 		self.inputs = {}
 		self.tasks = []
 		
@@ -128,3 +128,23 @@ class threadManager():
 				iterTasks.append(t)
 		self.tasks = iterTasks
 		self.logEvent(" Generated "+str(len(self.tasks))+" tasks")
+		
+	def generateBatches(self):
+		self.batches = []
+		
+		if len(self.tasks) < self.batchSize*len(self.activeThreads):
+			self.logEvent(" Batch size too large for all connections to get a task")
+			self.batchSize = int(len(self.tasks)/len(self.activeThreads))
+			if self.batchSize == 0:
+				self.batchSize = 1
+				self.logEvent(" More connections than tasks, setting batch size to 1")
+			else:
+				self.logEvent(" Automatically setting batch size to "+str(self.batchSize)+" to balance load")
+
+		nbatches = int(len(self.tasks)/float(self.batchSize))
+		self.logEvent(" Dividing up "+str(nbatches+(nbatches*self.batchSize<len(self.tasks)))+" batches for calculation")
+		for b in range(0, nbatches):
+			self.batches.append(self.tasks[b*self.batchSize:(b+1)*self.batchSize])
+		if nbatches*self.batchSize<len(self.tasks):
+			self.batches.append(self.tasks[nbatches*self.batchSize:])
+			

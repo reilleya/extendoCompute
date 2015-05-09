@@ -68,6 +68,12 @@ def controllerClientHandler(conn, addr):
 			
 		if req[0] == "genTasks":
 			manager.generateTasks()
+		
+		if req[0] == "genBatches":
+			manager.generateBatches()
+			
+		if req[0] == "batches":
+			conn.send(manager.batches)
 			
 	manager.logEvent("[Controller] Closed controller connection with "+addr)
 	conn.send("exit")
@@ -89,8 +95,8 @@ manager = threadManager.threadManager()
 
 while not exiting:
 	buff = ""
-	buff += ("="*40)+"extendoCompute"+("="*40)+"\n"
-	buff +=  ("="*94)+"\n"
+	buff += ("="*50)+"extendoCompute"+("="*50)+"\n"
+	buff +=  ("="*114)+"\n"
 	buff +=  "Recent Events:\n"
 	events = manager.log[-10:]
 	if events!=None:
@@ -99,12 +105,12 @@ while not exiting:
 			events.append("-")
 		for event in events:
 			buff += "\t"+event+"\n"
-	buff += ("-"*94)+"\n"
+	buff += ("-"*114)+"\n"
 	buff += str(len(manager.activeThreads))+" active connection"+("s"*(len(manager.activeThreads)!=1))+(":"*(len(manager.activeThreads)!=0))+"\n"
 	for id,ct in manager.activeThreads.items():
 		buff += "\t"+ct.generateStatusString()+"\n"
-	buff += ("="*94)+"\n"
-	buff += ("="*94)+"\n"
+	buff += ("="*114)+"\n"
+	buff += ("="*114)+"\n"
 	os.system("cls")
 	print buff
 	time.sleep(0.1)

@@ -69,7 +69,7 @@ while i!="exit":
 		conn.send(["iterations", int(i.split(" ")[1])])
 		print "Set iteration count to "+i.split(" ")[1]
 	
-	if i[0:5] == "batch":
+	if i[0:9] == "batchSize":
 		conn.send(["batchsize", int(i.split(" ")[1])])
 		print "Set batch size to "+i.split(" ")[1]
 		
@@ -116,7 +116,23 @@ while i!="exit":
 			
 	if i[0:8] == "genTasks":
 		conn.send(["genTasks"])
+		
+	if i[0:10] == "genBatches":
+		conn.send(["genBatches"])
 	
+	if i[0:7] == "batches":
+		conn.send(["batches"])
+		batches = conn.recv()
+		print len(batches)
+		for bnum in range(0,len(batches)):
+			print "Batch #"+str(bnum+1)+":"
+			while len(batches[bnum])>0:
+				for t in batches[bnum]:
+					print "\t"+str(t)+"x"+str(batches[bnum].count(t))
+					while t in batches[bnum]:
+						batches[bnum].remove(t)
+				
+
 	i = raw_input(">")
 	
 conn.send(["close"])
