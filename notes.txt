@@ -1,7 +1,38 @@
 Command syntax:
 	["run"] -> ["run"]
 	
-[1-5, 10, 12, 15, "cat", "dog"] -> [1,2,3,4,5,10,12,15,"cat","dog"]
-1 -> 1
-dog -> "dog"
-"range(0,110)" -> exec "values = "+"range(0,110)"
+newInput command argument formats:
+	[1-5, 10, 12, 15, "cat", "dog"] -> [1,2,3,4,5,10,12,15,"cat","dog"]
+	1 -> 1
+	dog -> "dog"
+	"range(0,110)" -> exec "values = "+"range(0,110)"
+
+
+TODO:
+	Tell clients what thread they belong to(*) so they can reconnect to the same thread rather than starting a new one
+		Have connectionThreads stick around until closed after a socket disconnects, or at least for a reasonable delay
+	Lib system/command
+		Send blocks of code containing function/class definitions for clients to execute upon receiving, to set up the
+			prerequisites for running the actual program
+		How to handle imports?
+			Simple case:
+	Test command:
+		Run the program on all clients with a single set of inputs and return/log stats
+		Stats:
+			Execution successful/error text
+			Output
+			Completion time for every client
+	
+	Send current program to new clients connecting so they can receive tasks properly(*)
+	
+	(*)Handshake packet:
+		Sent upon accepting a new connection after receiving their initial communication.
+		Recv:
+			Connection Number: #, or -1 if new
+			
+		If new:
+			Send:
+				A new connection number
+				Libraries, if they exist
+		If existing:
+			Figure out if the client's program is up to date and restart existing batch if it hasn't been reassigned
