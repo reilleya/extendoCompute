@@ -58,3 +58,4 @@ target/
 perm.py
 errors.txt
 *.out
+errors.txt

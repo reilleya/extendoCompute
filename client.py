@@ -12,7 +12,7 @@ def runProg():
 	while running:
 		if state == "running":
 			for task in tasks: #will this be OK if more tasks are added mid-loop?
-				print "Running task "+str(ctask)+"/"+str(ntasks)
+				print "Running task "+str(ctask+1)+"/"+str(ntasks)
 				print "\t Task inputs: "+str(task)
 				exec prog
 				results.append([task, result])
