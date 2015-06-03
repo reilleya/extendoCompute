@@ -1,7 +1,8 @@
 import sys, os, threading, time, threadManager
 from multiprocessing.connection import Listener, Client
+import configLoader
 
-bindIP = "192.168.3.162"
+config = configLoader.cfgLoader("serverConfig.cfg")
 
 sys.stderr = open('errors.txt','w')
 
@@ -88,11 +89,11 @@ def controllerListener():
 
 exiting = False
 
-listener = Listener((bindIP, 7777), authkey="password")
+listener = Listener((config.bindIP, config.controllerPort), authkey="password")
 threading.Thread(target=controllerListener).start()
 
 print "in"
-manager = threadManager.threadManager()
+manager = threadManager.threadManager(config)
 print "out"
 
 while not exiting:
@@ -132,7 +133,7 @@ print "Ordering thread manager to close..."
 manager.exit()
 print "Done."
 print "Closing controller listener..."
-conn = Client((bindIP,7777), authkey="password")
+conn = Client((config.bindIP,config.controllerPort), authkey="password")
 print "Done."
 sys.stderr.close()
 sys.stderr = sys.__stderr__

@@ -2,10 +2,10 @@ import sys, os, threading, time, connectionThread, pickle
 from multiprocessing.connection import Listener, Client
 import random
 
-bindIP = "192.168.3.162"
-
 class threadManager():
-	def __init__(self):
+	def __init__(self, config):
+		self.config = config
+	
 		self.activeThreads = {}
 		self.nextConnID = 0
 		
@@ -29,7 +29,7 @@ class threadManager():
 		
 		self.results = []
 		
-		self.listener = Listener((bindIP, 2424), authkey="password")
+		self.listener = Listener((self.config.bindIP, self.config.listenPort), authkey="password")
 		self.listenThread = threading.Thread(target=self.listen, args=())
 		self.listenThread.start()
 		
@@ -107,7 +107,7 @@ class threadManager():
 			thd.exit()
 		print "\tDone."
 		print "\tClosing listener..."
-		conn = Client((bindIP,2424), authkey="password") #This allows 'accept' to happen and the listen thread to be done
+		conn = Client((self.config.bindIP,self.config.listenPort), authkey="password") #This allows 'accept' to happen and the listen thread to be done
 		print "\tDone."
 		
 	def distribNewProgram(self, name, prog):

@@ -3,7 +3,7 @@ from multiprocessing.connection import Client
 
 ip = raw_input("IP>")
 if ip=="":
-	ip = "192.168.3.162"
+	ip = "192.168.1.148"
 
 conn = Client((ip,7777), authkey="password")
 

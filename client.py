@@ -27,14 +27,14 @@ def runProg():
 			
 ip = raw_input("IP>")
 if ip=="":
-	ip = "192.168.3.162"
+	ip = "192.168.1.148"
 		
 running = True
 conn = Client((ip,2424), authkey="password")
 conn.send(-1)
 handshake = conn.recv()
 
-threadID = handshake[]
+threadID = handshake["threadID"]
 state = "idle"
 
 progname = ""

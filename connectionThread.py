@@ -40,7 +40,7 @@ class connectionThread():
 				if not self.exiting:
 					if self.state != "connerror":
 						self.threadMan.logEvent("[Connection"+str(self.threadID)+"] Connection receive error!")
-						self.threadMan.logEvent("[Connection"+str(self.threadID)+" Waiting "+str(timeout)+" seconds before closing"
+						self.threadMan.logEvent("[Connection"+str(self.threadID)+" Waiting "+str(timeout)+" seconds before closing")
 						self.state = "connerror"
 						self.disconnectTime = time.time()
 					
@@ -60,9 +60,9 @@ class connectionThread():
 		self.conn.close()
 				
 	def update(self):
-		while not exiting:
+		while not self.exiting:
 			if self.state == "connerror":
-				if time.time() - self.disconnectTime > TIMEOUT:
+				if time.time() - self.disconnectTime > self.threadMan.config.timeout:
 					self.threadMan.logEvent("[Connection"+str(self.threadID)+"] Unable to regain connection. Closing.")
 					self.exiting = True
 					self.threadMan.deleteThread(self.threadID)
