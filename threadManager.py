@@ -68,7 +68,7 @@ class threadManager():
 					if threadID in self.activeThreads:
 						self.activeThreads[threadID].reconnect(conn)
 					else:
-						conn.send(["exit"]) #BAD WORKAROUND
+						conn.send(["exit", "client failed to reconnect in time"]) #BAD WORKAROUND
 			
 	def endThread(self, threadID):
 		self.logEvent(" Ending thread #"+str(threadID))

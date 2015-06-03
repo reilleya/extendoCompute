@@ -64,7 +64,7 @@ while running:
 			continue
 		
 	if d[0] == "exit":
-		print "Exiting"
+		print "Exiting, because "+d[1]
 		running = False
 		
 	if d[0] == "program":
