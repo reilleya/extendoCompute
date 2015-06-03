@@ -24,14 +24,17 @@ def runProg():
 			#print "Results: "+str(results)
 			conn.send(["results", results])
 			results = []
-	
+			
 ip = raw_input("IP>")
 if ip=="":
 	ip = "192.168.3.162"
 		
 running = True
 conn = Client((ip,2424), authkey="password")
+conn.send(-1)
+handshake = conn.recv()
 
+threadID = handshake[]
 state = "idle"
 
 progname = ""
@@ -54,6 +57,9 @@ while running:
 		if running:
 			print "Connection error! Retrying..." 
 			conn = Client((ip,2424), authkey="password")
+			conn.send(threadID)
+			handshake = conn.recv()
+
 			print "Connection regained!"
 			continue
 		

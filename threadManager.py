@@ -60,8 +60,15 @@ class threadManager():
 			conn = self.listener.accept()
 			if not self.exiting:
 				self.logEvent("[Listener] Receiving connection from "+self.listener.last_accepted[0])
-				self.activeThreads[self.nextConnID]=connectionThread.connectionThread(self, self.nextConnID, conn)
-				self.nextConnID+=1
+				threadID = conn.recv()
+				if threadID == -1:
+					self.activeThreads[self.nextConnID]=connectionThread.connectionThread(self, self.nextConnID, conn)
+					self.nextConnID+=1
+				else:
+					if threadID in self.activeThreads:
+						self.activeThreads[threadID].reconnect(conn)
+					else:
+						conn.send(["exit"]) #BAD WORKAROUND
 			
 	def endThread(self, threadID):
 		self.logEvent(" Ending thread #"+str(threadID))
