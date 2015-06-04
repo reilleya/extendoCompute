@@ -17,13 +17,16 @@ def runProg():
 				exec prog
 				results.append([task, result])
 				ctask+=1
-		
+					
 			state = "idle"
 			print "All done with tasks"
+			print "Sending results!"
+			conn.send(["results", results])
+			print "Sent a batch of "+str(len(results))+" results"
+			results = []
 			ctask = 0
 			#print "Results: "+str(results)
-			conn.send(["results", results])
-			results = []
+			
 			
 ip = raw_input("IP>")
 if ip=="":
@@ -59,7 +62,6 @@ while running:
 			conn = Client((ip,2424), authkey="password")
 			conn.send(threadID)
 			handshake = conn.recv()
-
 			print "Connection regained!"
 			continue
 		

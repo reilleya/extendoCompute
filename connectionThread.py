@@ -23,6 +23,7 @@ class connectionThread():
 	def reconnect(self, newConnection):
 		self.conn = newConnection
 		self.handshake()
+		self.state = "idle"
 		
 	def handshake(self):
 		packet = {}
@@ -40,11 +41,10 @@ class connectionThread():
 				if not self.exiting:
 					if self.state != "connerror":
 						self.threadMan.logEvent("[Connection"+str(self.threadID)+"] Connection receive error!")
-						self.threadMan.logEvent("[Connection"+str(self.threadID)+" Waiting "+str(timeout)+" seconds before closing")
+						self.threadMan.logEvent("[Connection"+str(self.threadID)+" Waiting "+str(self.threadMan.config.timeout)+" seconds before closing")
+						#self.threadMan.reportDisconnect(self.threadID)
 						self.state = "connerror"
 						self.disconnectTime = time.time()
-					
-				break
 				
 			if d[0] == "close":
 				self.exit()
@@ -75,6 +75,8 @@ class connectionThread():
 			ss += " Running, task " + str(self.ctask) + " of " + str(len(self.tasks))
 		elif self.state == "done":
 			ss += "Done"
+		elif self.state == "connerror":
+			ss += "Connection problem, waiting "+str(self.threadMan.config.timeout-(time.time()-self.disconnectTime))+" more seconds before disconnecting"
 		return ss
 	
 	def exit(self):

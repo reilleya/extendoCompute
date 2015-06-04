@@ -76,6 +76,12 @@ def controllerClientHandler(conn, addr):
 		if req[0] == "batches":
 			conn.send(manager.batches)
 			
+		if req[0] == "batchStatus":
+			conn.send(manager.batchStates)
+			
+		if req[0] == "reset":
+			manager.reset(req[1:])
+			
 	manager.logEvent("[Controller] Closed controller connection with "+addr)
 	conn.send("exit")
 	conn.close()
@@ -101,10 +107,10 @@ while not exiting:
 	buff += ("="*50)+"extendoCompute"+("="*50)+"\n"
 	buff +=  ("="*114)+"\n"
 	buff +=  "Recent Events:\n"
-	events = manager.log[-10:]
+	events = manager.log[-15:]
 	if events!=None:
 		events.reverse()
-		while len(events)<10:
+		while len(events)<15:
 			events.append("-")
 		for event in events:
 			buff += "\t"+event+"\n"

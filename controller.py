@@ -140,6 +140,15 @@ while i!="exit":
 		for event in events:
 			print event
 	
+	if i[0:11] == "batchStatus":
+		conn.send(["batchStatus"])
+		b = conn.recv()
+		print b
+		
+	if i[0:5] == "reset":
+		toreset = i.split(" ")[1:]
+		conn.send(["reset"]+toreset)
+	
 	#TODO: Tasks command			
 
 	i = raw_input(">")

@@ -27,6 +27,7 @@ class threadManager():
 		self.batches = []
 		self.batchStates = []
 		
+		self.startTime = 0
 		self.results = []
 		
 		self.listener = Listener((self.config.bindIP, self.config.listenPort), authkey="password")
@@ -42,16 +43,23 @@ class threadManager():
 			if self.running:
 				for ctn in range(0, len(self.activeThreads)):
 					if self.activeThreads[ctn].state == "idle":
-						self.logEvent(" "+str(ctn)+" is idle!")
+						#self.logEvent(" "+str(ctn)+" is idle!")
 						for bsn in range(0, len(self.batchStates)):
 							if self.batchStates[bsn][0] == "waiting":
 								self.batchStates[bsn] = ["calc", ctn]
 								self.activeThreads[ctn].assignTasks(self.batches[bsn])
 								self.activeThreads[ctn].run()
 								break
+					
+					if self.activeThreads[ctn].state == "connerror":
+						self.logEvent(" Thread "+str(ctn)+" is reporting connection problems, reallocating tasks")
+						for bsn in range(0, len(self.batchStates)):
+							if self.batchStates[bsn][0] == "calc" and self.batchStates[bsn][1] == ctn:
+								self.logEvent(" Reallocating batch "+str(bsn))
+								self.batchStates[bsn] = ["waiting"]
 				
 				if len(self.results) == len(self.tasks):
-					self.logEvent(" All results received, done running")
+					self.logEvent(" All results received, done running after "+str(time.time()-self.startTime)+" seconds")
 					self.running = False
 		
 	def listen(self):
@@ -91,6 +99,7 @@ class threadManager():
 			for b in self.batches:
 				self.batchStates.append(["waiting"])
 			self.running = True
+			self.startTime = time.time()
 		else:
 			self.logEvent(" Already running")
 			#for k,thd in self.activeThreads.items():
@@ -192,3 +201,36 @@ class threadManager():
 		if nbatches*self.batchSize<len(self.tasks):
 			self.batches.append(self.tasks[nbatches*self.batchSize:])
 			
+	#def reportDisconnect(self):
+	#	
+			
+	def reset(self, components):
+		self.logEvent(" Resetting "+str(components)[1:-1].replace("'", ""))
+		if "all" in components:
+			self.prog = ""
+			self.progName = ""
+			self.iterations = 1
+			self.inputs = {}
+			self.tasks = []
+			self.batchSize = 1
+			self.batches = []
+			self.batchStates = []
+			self.startTime = 0
+			self.results = []
+			
+		if "results" in components:
+			self.results = []
+			
+		if "program" in components:
+			self.prog = ""
+			self.progName = ""
+		
+		if "tasks" in components:
+			self.tasks = []
+		
+		if "inputs" in components:
+			self.inputs = {}
+		
+		if "batches" in components:
+			self.batches = []
+			self.batchStates = []
