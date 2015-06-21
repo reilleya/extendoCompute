@@ -124,7 +124,7 @@ while not exiting:
 	if manager.running:
 		buff += "\tRunning:\n"
 		buff += "\tResults: "+str(len(manager.results))+"/"+str(len(manager.tasks))+"\n"
-		#buff += "\tBatch States: "+str(manager.batchStates)+"\n"
+		buff += "\tBatch States: "+str(manager.batchStates)+"\n"
 	else:
 		buff += "\tNot running\n"
 	buff += ("="*114)+"\n"
