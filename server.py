@@ -104,7 +104,7 @@ print "out"
 
 while not exiting:
 	buff = ""
-	buff += ("="*50)+"extendoCompute"+("="*50)+"\n"
+	buff += ("="*46)+"extendoCompute->Server"+("="*46)+"\n"
 	buff +=  ("="*114)+"\n"
 	buff +=  "Recent Events:\n"
 	events = manager.log[-15:]

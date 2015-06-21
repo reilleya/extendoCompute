@@ -41,7 +41,7 @@ class connectionThread():
 				if not self.exiting:
 					if self.state != "connerror":
 						self.threadMan.logEvent("[Connection"+str(self.threadID)+"] Connection receive error!")
-						self.threadMan.logEvent("[Connection"+str(self.threadID)+" Waiting "+str(self.threadMan.config.timeout)+" seconds before closing")
+						self.threadMan.logEvent("[Connection"+str(self.threadID)+"] Waiting "+str(self.threadMan.config.timeout)+" seconds before closing")
 						#self.threadMan.reportDisconnect(self.threadID)
 						self.state = "connerror"
 						self.disconnectTime = time.time()
