@@ -116,9 +116,13 @@ while i!="exit":
 			
 	if i[0:8] == "genTasks":
 		conn.send(["genTasks"])
+		ntasks = conn.recv()
+		print "Generated "+str(ntasks)+" tasks."
 		
 	if i[0:10] == "genBatches":
 		conn.send(["genBatches"])
+		nbatches = conn.recv()
+		print "Generated "+str(ntasks)+" batches."
 	
 	if i[0:7] == "batches":
 		conn.send(["batches"])

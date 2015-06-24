@@ -69,9 +69,11 @@ def controllerClientHandler(conn, addr):
 			
 		if req[0] == "genTasks":
 			manager.generateTasks()
+			conn.send(len(manager.tasks))
 		
 		if req[0] == "genBatches":
 			manager.generateBatches()
+			conn.send(len(manager.batches))
 			
 		if req[0] == "batches":
 			conn.send(manager.batches)
