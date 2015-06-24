@@ -47,7 +47,7 @@ class threadManager():
 						for bsn in range(0, len(self.batchStates)):
 							if self.batchStates[bsn][0] == "waiting":
 								self.batchStates[bsn] = ["calc", ctn]
-								self.activeThreads[ctn].assignTasks(self.batches[bsn])
+								self.activeThreads[ctn].assignTasks(bsn, self.batches[bsn])
 								self.activeThreads[ctn].run()
 								break
 					

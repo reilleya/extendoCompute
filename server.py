@@ -4,7 +4,7 @@ import configLoader
 
 config = configLoader.cfgLoader("serverConfig.cfg")
 
-sys.stderr = open('errors.txt','w')
+sys.stderr = open('serverErrors.txt','w')
 
 def controllerClientHandler(conn, addr):
 	global exiting

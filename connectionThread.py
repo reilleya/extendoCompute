@@ -10,7 +10,9 @@ class connectionThread():
 		self.program = ""
 		self.state = "idle"
 		self.ctask = 0
+		self.batchnum = -1
 		self.tasks = tasks
+		self.results = []
 		self.conn = connection
 		self.exiting = False
 		self.handshake()
@@ -55,7 +57,10 @@ class connectionThread():
 				
 			if d[0] == "results":
 				self.threadMan.logEvent("[Connection"+str(self.threadID)+"] Received results from "+str(len(d[1]))+" tasks from client")
-				self.threadMan.reportResults(d[1], self.threadID)
+				self.results+=d[1]
+				if len(self.results) == len(self.tasks):
+					self.threadMan.reportResults(self.results, self.threadID)
+					self.results = []
 			
 		self.conn.close()
 				
@@ -100,7 +105,8 @@ class connectionThread():
 		else:
 			self.threadMan.logEvent("[Connection"+str(self.threadID)+"] No program to start")
 			
-	def assignTasks(self, tasks):
+	def assignTasks(self, batchnum, tasks):
+		self.batchnum = batchnum
 		self.tasks = tasks
 		self.conn.send(["tasks", tasks, "r"])
 	

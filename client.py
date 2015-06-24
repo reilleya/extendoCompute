@@ -1,5 +1,7 @@
 from multiprocessing.connection import Client
-import threading, time, useful, os
+import threading, time, useful, os, sys
+	
+sys.stderr = open('clientErrors.txt','w')
 	
 def logEvent(event):
 	global log
@@ -32,8 +34,8 @@ def outputThread():
 			if state == "running":
 				buff += "\tRunning program: "+progname+"\n"
 				buff += "\tTask:\n"
-				buff += "\t\t"+useful.progressBar(ctask, ntasks, 100)+"Task: "+str(ctask)+"/"+str(ntasks)+"\n"
-				buff += "\t\tCurrent: "+str(tasks[ctask])+"\n"
+				buff += "\t\t"+useful.progressBar(ctask, ntasks, 90)+"\n\t\tTask: "+str(ctask)+"/"+str(ntasks)+"\n"
+				#buff += "\t\tCurrent: "+str(tasks[ctask])+"\n"
 			else:
 				buff += "Idle"+"\n"
 			buff += ("="*114)+"\n"
@@ -52,13 +54,19 @@ def runProg():
 				exec prog
 				results.append([task, result])
 				ctask+=1
+				if len(results)%100 == 0: #make this configurable?
+					logEvent("Sending a batch of 100 results")
+					conn.send(["results", results[-100:]])
+					logEvent("Sent!")
 					
 			state = "idle"
-			logEvent("Tasks complete, sending results...")
-			conn.send(["results", results])
-			logEvent("Sent a batch of "+str(len(results))+" results")
-			results = []
 			ctask = 0
+			if len(tasks)%100!=0:
+				logEvent("All tasks complete, sending final results...")
+				conn.send(["results", results[-(len(results)%100):]])
+				logEvent("Sent a batch of "+str(len(results[-(len(results)%100):]))+" results")
+				results = []
+			
 			#print "Results: "+str(results)
 			
 log = []

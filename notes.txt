@@ -36,3 +36,7 @@ TODO:
 				Libraries, if they exist
 		If existing:
 			Figure out if the client's program is up to date and restart existing batch if it hasn't been reassigned
+
+	Upon client disconnect, compare the results to the batch and revise it to only include unfinished tasks
+	Make a shared, enumerated list of tasks
+	Clean up *errors.txt upon successul exit, or if empty?
