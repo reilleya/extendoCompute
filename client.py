@@ -19,7 +19,7 @@ def outputThread():
 			buff = ("="*46)+"extendoCompute->Client"+("="*46)+"\n"
 			buff += ("="*114)+"\n"
 			buff += "Recent Events:\n"
-			for i in range(-1, -1*useful.clamp(16, 0, len(log))+1, -1):
+			for i in range(-1, -useful.clamp(16, 0, len(log))+1, -1):
 				buff += "\t"+log[i]+"\n"
 			for i in range(0, 16-len(log)):
 				buff += "\t-"+"\n"

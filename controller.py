@@ -139,7 +139,7 @@ while i!="exit":
 	if i[0:3] == "log":
 		conn.send(["info"])
 		d = conn.recv()
-		events = d[1][-1*(int(i[4:])):]
+		events = d[1][-(int(i[4:])):]
 		events.reverse()
 		for event in events:
 			print event

@@ -60,16 +60,22 @@ class threadManager():
 				
 				if len(self.results) == len(self.tasks):
 					self.logEvent(" All results received, done running after "+str(time.time()-self.startTime)+" seconds")
+					self.calcShareStats()
 					self.running = False
 	
 	def calcShareStats(self):
 		workDone = {}
 		tasksDone = 0
 		for bsn in range(0, len(self.batchStates)):
-			if self.batchStates[bsn][0] == "done":
+			if self.batchStates[bsn][0] == "complete":
 				if self.batchStates[bsn][1] not in workDone:
 					workDone[self.batchStates[bsn][1]] = 0
 				workDone[self.batchStates[bsn][1]]+=len(self.batches[bsn])
+				tasksDone += len(self.batches[bsn])
+		outputMess = "Workshares: "
+		for threadID in workDone:
+			outputMess += "#"+str(threadID)+": "+str(workDone[threadID])+"/"+str(tasksDone)+"("+str(100*float(workDone[threadID])/tasksDone)[:5]+"%), "
+		self.logEvent(outputMess[:-2])
 	
 	def listen(self):
 		while not self.exiting: 
@@ -136,10 +142,10 @@ class threadManager():
 			thd.newProgram(name, prog)
 			
 	def reportResults(self, results, threadID):
-		testmess = str(len(self.results))+"->"
+		#testmess = str(len(self.results))+"->"
 		self.results += results
-		testmess += str(len(self.results))
-		self.logEvent(testmess)
+		#testmess += str(len(self.results))
+		#self.logEvent(testmess)
 		for bsn in range(0, len(self.batches)):
 			if self.batchStates[bsn][0] == "calc" and self.batchStates[bsn][1] == threadID:
 				self.batchStates[bsn][0] = "complete"
