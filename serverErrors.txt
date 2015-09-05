@@ -1,0 +1,10 @@
+Exception in thread Thread-3:
+Traceback (most recent call last):
+  File "D:\Python27\lib\threading.py", line 810, in __bootstrap_inner
+    self.run()
+  File "D:\Python27\lib\threading.py", line 763, in run
+    self.__target(*self.__args, **self.__kwargs)
+  File "D:\Programming Projects\Python\extendoCompute\threadManager.py", line 48, in update
+    if self.batchStates[bsn][0] == "waiting":
+IndexError: list index out of range
+

@@ -126,7 +126,20 @@ while not exiting:
 	if manager.running:
 		buff += "\tRunning:\n"
 		buff += "\tResults: "+str(len(manager.results))+"/"+str(len(manager.tasks))+"\n"
-		buff += "\tBatch States: "+str(manager.batchStates)+"\n"
+		batchc = 0
+		batchp = 0
+		batchw = 0
+		for batchState in manager.batchStates:
+			if batchState[0] == "complete":
+				batchc+=1
+			if batchState[0] == "calc":
+				batchp+=1
+			if batchState[0] == "waiting":
+				batchw+=1
+		buff += "\tBatch States: Waiting: "+str(batchw)+"\n"
+		buff += "\t              In Progress: "+str(batchp)+"\n"
+		buff += "\t              Done: "+str(batchc)+"\n"
+		
 	else:
 		buff += "\tNot running\n"
 	buff += ("="*114)+"\n"
