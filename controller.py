@@ -159,6 +159,9 @@ while i!="exit":
 	if i[0:6] == "resume":
 		conn.send(["resume"])
 	
+	if i[0:6] == "cancel":
+		conn.send(["cancel"])
+	
 	#TODO: Tasks command			
 
 	i = raw_input(">")

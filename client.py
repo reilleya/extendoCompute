@@ -138,3 +138,13 @@ while running:
 	if d[0] == "resume":
 		if state == "paused":
 			state = "running"
+			
+	if d[0] == "cancel":
+		if state == "running":
+			state = "idle"
+			ntasks = 0
+			ctask = 1
+			tasks = []
+			cres = None
+			results = []
+			

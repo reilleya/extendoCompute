@@ -262,3 +262,8 @@ class threadManager():
 		self.running = True
 		for key in self.activeThreads:
 			self.activeThreads[key].resume()
+			
+	def cancel(self):
+		self.running = False
+		for key in self.activeThreads:
+			self.activeThreads[key].cancel()

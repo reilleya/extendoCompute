@@ -90,6 +90,9 @@ def controllerClientHandler(conn, addr):
 		if req[0] == "resume":
 			manager.resume()
 			
+		if req[0] == "cancel":
+			manager.cancel()
+			
 	manager.logEvent("[Controller] Closed controller connection with "+addr)
 	conn.send("exit")
 	conn.close()

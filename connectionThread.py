@@ -123,3 +123,7 @@ class connectionThread():
 	def resume(self):
 		self.conn.send(["resume"])
 		self.state = "running"
+		
+	def cancel(self):
+		self.conn.send(["cancel"])
+		self.state = "idle"
