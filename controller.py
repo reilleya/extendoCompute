@@ -1,6 +1,14 @@
 import os, sys, pickle
 from multiprocessing.connection import Client
 
+command_help = {"exit":"Closes the controller", "stop":"Stops extendoCompute, and then closes the controller", "info":"Displays server status", "prog":"'prog <name>' Loads the python script <name> and distributes it to clients", 
+				"run":"Starts distributing batches of tasks to clients and running them", "disc":"'disc #' Disconnects client number #", "res":"'res [s[l/r]<filename>/d]' Displays (d) or saves (s) results. Saves to <filename> on the controller\n\t\tcomputer if (l), or on the server if (r)", "iters":"'iters #' Sets the number of iterations to run", 
+				"batchSize":"'batchSize #' Sets the size of each batch that will be generated", "newInput":"'newInput <name> <values>' Creates a new input called <name> that has possible values <values>", 
+				"delInput":"'delInput <name>' Removes an input called <name>", "inputs":"Lists all inputs and their possible values", "genTasks":"Generates tasks based on the inputs and number of iterations", 
+				"genBatches":"Divides the tasks into batches", "batches":"Displays information about batches", "log":"'log #' Shows the last # log messages", "batchStatus":"Gives current information about batches", 
+				"reset":"'reset <feature1> <feature2> <feature#>' Resets a server property. <feature#> can be: \n\t\tall\n\t\tresults\n\t\tinputs\n\t\ttasks\n\t\tbatches\n\t\tprogram", 
+				"pause":"Pauses a running program", "resume":"Resumes a running program", "cancel":"Stops a running program"}
+
 ip = raw_input("IP>")
 if ip=="":
 	ip = "192.168.1.148"
@@ -15,7 +23,7 @@ while i!="exit":
 		print "Shutting extendoCompute down"
 		sys.exit()
 		
-	if i=="info":
+	elif i=="info":
 		conn.send(["info"])
 		d = conn.recv()
 		print "Recent Events:"
@@ -30,17 +38,17 @@ while i!="exit":
 		for ct in d[0]:
 			print "\t"+ct
 			
-	if i[0:4] == "prog":
+	elif i[0:4] == "prog":
 		loc = i.split(" ")[1]
 		n = loc.split("/")[-1]
 		f = open(loc, "r")
 		c = f.read()
 		conn.send(["program", n,c])
 		
-	if i[0:3] == "run":
+	elif i[0:3] == "run":
 		conn.send(["run"])
 		
-	if i[0:4] == "disc":
+	elif i[0:4] == "disc":
 		conn.send(["disc", int(i.split(" ")[1])])
 		res = conn.recv()
 		if res == -1:
@@ -48,7 +56,7 @@ while i!="exit":
 		else:
 			print "Closed connection #"+str(res)
 	
-	if i[0:3] == "res":
+	elif i[0:3] == "res":
 		if i[4] == "s":
 			if i[6] == "l":
 				conn.send(["results"])
@@ -65,15 +73,15 @@ while i!="exit":
 			res = conn.recv()
 			print res
 		
-	if i[0:5] == "iters":
+	elif i[0:5] == "iters":
 		conn.send(["iterations", int(i.split(" ")[1])])
 		print "Set iteration count to "+i.split(" ")[1]
 	
-	if i[0:9] == "batchSize":
+	elif i[0:9] == "batchSize":
 		conn.send(["batchsize", int(i.split(" ")[1])])
 		print "Set batch size to "+i.split(" ")[1]
 		
-	if i[0:8] == "newInput":
+	elif i[0:8] == "newInput":
 		args = i[9:]
 		name = args[:args.index(" ")]
 		rawvalues = args[args.index(" ")+1:]
@@ -103,28 +111,28 @@ while i!="exit":
 				values = [rawvalues]
 		conn.send(["newInput", name, values])
 		
-	if i[0:8] == "delInput":
+	elif i[0:8] == "delInput":
 		name = i[9:]
 		conn.send(["delInput", name])
 		
-	if i[0:6] == "inputs":
+	elif i[0:6] == "inputs":
 		conn.send(["inputs"])
 		res = conn.recv()
 		print "Active inputs:"
 		for name,values in res.items():
 			print "\t"+name+": "+str(values)
 			
-	if i[0:8] == "genTasks":
+	elif i[0:8] == "genTasks":
 		conn.send(["genTasks"])
 		ntasks = conn.recv()
 		print "Generated "+str(ntasks)+" tasks."
 		
-	if i[0:10] == "genBatches":
+	elif i[0:10] == "genBatches":
 		conn.send(["genBatches"])
 		nbatches = conn.recv()
 		print "Generated "+str(nbatches)+" batches."
 	
-	if i[0:7] == "batches":
+	elif i[0:7] == "batches":
 		conn.send(["batches"])
 		batches = conn.recv()
 		print len(batches)
@@ -136,7 +144,7 @@ while i!="exit":
 					while t in batches[bnum]:
 						batches[bnum].remove(t)
 	
-	if i[0:3] == "log":
+	elif i[0:3] == "log":
 		conn.send(["info"])
 		d = conn.recv()
 		events = d[1][-(int(i[4:])):]
@@ -144,26 +152,34 @@ while i!="exit":
 		for event in events:
 			print event
 	
-	if i[0:11] == "batchStatus":
+	elif i[0:11] == "batchStatus":
 		conn.send(["batchStatus"])
 		b = conn.recv()
 		print b
 		
-	if i[0:5] == "reset":
+	elif i[0:5] == "reset":
 		toreset = i.split(" ")[1:]
 		conn.send(["reset"]+toreset)
 	
-	if i[0:5] == "pause":
+	elif i[0:5] == "pause":
 		conn.send(["pause"])
 	
-	if i[0:6] == "resume":
+	elif i[0:6] == "resume":
 		conn.send(["resume"])
 	
-	if i[0:6] == "cancel":
+	elif i[0:6] == "cancel":
 		conn.send(["cancel"])
+	
+	elif i[0:4] == "help":
+		print "Available commands:"
+		for key in command_help:
+			print "\t"+key+": "+command_help[key]
 	
 	#TODO: Tasks command			
 
+	else:
+		print "Unknown command. Type 'help' for a list of commands"
+	
 	i = raw_input(">")
 	
 conn.send(["close"])
