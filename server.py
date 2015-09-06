@@ -134,7 +134,7 @@ while not exiting:
 	buff += "\tName: "+(manager.progName*(manager.progName!=""))+("N/A"*(manager.progName==""))+"\n"
 	if manager.running:
 		buff += "\tRunning:\n"
-		buff += "\tResults: "+str(len(manager.results))+"/"+str(len(manager.tasks))+"\n"
+		buff += "\tResults: "+str(len(manager.results))+"/"+str(len(manager.tasks))+"("+str(100*float(len(manager.results))/float(len(manager.tasks)))[:5]+"%)"+"\n"
 		batchc = 0
 		batchp = 0
 		batchw = 0
