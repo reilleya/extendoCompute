@@ -174,30 +174,35 @@ class threadManager():
 			
 	def generateTasks(self):
 		self.tasks=[]
-		counts = {}
-		order = []
-		for i in self.inputs:
-			counts[i] = 0
-			order.append(i)
-		ntasks = 1
-		for name,values in self.inputs.items():
-			ntasks *= len(values)
-		for it in range(0, ntasks):
-			self.tasks.append({})
+		if len(self.inputs) == 1: #We can skip all of the messiness that lies ahead if we only have one input
+			for v in self.inputs[self.inputs.keys()[0]]:
+				self.tasks.append({self.inputs.keys()[0]:v})
+			
+		else:
+			counts = {}
+			order = []
+			for i in self.inputs:
+				counts[i] = 0
+				order.append(i)
+			ntasks = 1
 			for name,values in self.inputs.items():
-				self.tasks[-1][name] = self.inputs[name][counts[name]]
-			counts[order[0]]+=1
-			for i in range(0, len(self.inputs)):
-				for n,c in counts.items():
-					if c == len(self.inputs[n]):
-						if order.index(n)+1 != len(order):
-							counts[order[order.index(n)+1]]+=1
-						counts[n] = 0
-		iterTasks = []
-		for t in self.tasks:
-			for i in range(0, self.iterations):
-				iterTasks.append(t)
-		self.tasks = iterTasks
+				ntasks *= len(values)
+			for it in range(0, ntasks):
+				self.tasks.append({})
+				for name,values in self.inputs.items():
+					self.tasks[-1][name] = self.inputs[name][counts[name]]
+				counts[order[0]]+=1
+				for i in range(0, len(self.inputs)):
+					for n,c in counts.items():
+						if c == len(self.inputs[n]):
+							if order.index(n)+1 != len(order):
+								counts[order[order.index(n)+1]]+=1
+							counts[n] = 0
+			iterTasks = []
+			for t in self.tasks:
+				for i in range(0, self.iterations):
+					iterTasks.append(t)
+			self.tasks = iterTasks
 		self.logEvent(" Generated "+str(len(self.tasks))+" tasks")
 		
 	def generateBatches(self):
