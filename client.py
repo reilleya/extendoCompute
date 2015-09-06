@@ -27,6 +27,7 @@ def outputThread():
 			buff += "Connection Info:\n"
 			if connected:
 				buff += "\tConnected to "+str(ip)+"\n"
+				buff += "\tRegistered as thread #"+str(threadID)+"\n"
 			else:
 				buff += "\tConnection error!\n"
 			buff += ("-"*114)+"\n"
