@@ -41,7 +41,7 @@ class threadManager():
 	def update(self):
 		while not self.exiting:
 			if self.running:
-				for ctn in range(0, len(self.activeThreads)):
+				for ctn in range(0, len(self.activeThreads)): #self.activeThreads is a dict... not a list. Why not loop over the keys?
 					if self.activeThreads[ctn].state == "idle":
 						#self.logEvent(" "+str(ctn)+" is idle!")
 						for bsn in range(0, len(self.batchStates)):
@@ -252,3 +252,13 @@ class threadManager():
 		if "batches" in components:
 			self.batches = []
 			self.batchStates = []
+			
+	def pause(self):
+		self.running = False
+		for key in self.activeThreads:
+			self.activeThreads[key].pause()
+		
+	def resume(self):
+		self.running = True
+		for key in self.activeThreads:
+			self.activeThreads[key].resume()

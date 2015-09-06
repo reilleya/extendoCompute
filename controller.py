@@ -153,6 +153,12 @@ while i!="exit":
 		toreset = i.split(" ")[1:]
 		conn.send(["reset"]+toreset)
 	
+	if i[0:5] == "pause":
+		conn.send(["pause"])
+	
+	if i[0:6] == "resume":
+		conn.send(["resume"])
+	
 	#TODO: Tasks command			
 
 	i = raw_input(">")

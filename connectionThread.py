@@ -82,6 +82,8 @@ class connectionThread():
 			ss += "Done"
 		elif self.state == "connerror":
 			ss += "Connection problem, waiting "+str(self.threadMan.config.timeout-(time.time()-self.disconnectTime))+" more seconds before disconnecting"
+		elif self.state == "paused":
+			ss += "Paused"
 		return ss
 	
 	def exit(self):
@@ -113,3 +115,11 @@ class connectionThread():
 	def addTasks(self, tasks):
 		self.tasks += tasks
 		self.conn.send(["tasks", tasks, "a"])
+		
+	def pause(self):
+		self.conn.send(["pause"])
+		self.state = "paused"
+		
+	def resume(self):
+		self.conn.send(["resume"])
+		self.state = "running"

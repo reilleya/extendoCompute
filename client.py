@@ -92,6 +92,7 @@ tasks = []
 cres = None
 results = []
 connected = True
+paused = False
 
 threading.Thread(target = runProg).start()
 threading.Thread(target = statusThread).start()
@@ -130,3 +131,10 @@ while running:
 	if d[0] == "run":
 		logEvent("Setting state to run")
 		state = "running"
+		
+	if d[0] == "pause":
+		state = "paused"
+		
+	if d[0] == "resume":
+		if state == "paused":
+			state = "running"

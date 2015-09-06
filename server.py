@@ -84,6 +84,12 @@ def controllerClientHandler(conn, addr):
 		if req[0] == "reset":
 			manager.reset(req[1:])
 			
+		if req[0] == "pause":
+			manager.pause()
+		
+		if req[0] == "resume":
+			manager.resume()
+			
 	manager.logEvent("[Controller] Closed controller connection with "+addr)
 	conn.send("exit")
 	conn.close()

@@ -40,3 +40,7 @@ TODO:
 	Upon client disconnect, compare the results to the batch and revise it to only include unfinished tasks
 	Make a shared, enumerated list of tasks
 	Clean up *errors.txt upon successul exit, or if empty?
+	
+	
+	Post processing? (like to save results to an image) ->
+	Pipelines!
