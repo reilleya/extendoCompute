@@ -29,6 +29,7 @@ class threadManager():
 		
 		self.startTime = 0
 		self.results = []
+		self.recvRes = 0
 		
 		self.listener = Listener((self.config.bindIP, self.config.listenPort), authkey="password")
 		self.listenThread = threading.Thread(target=self.listen, args=())
@@ -243,6 +244,7 @@ class threadManager():
 			
 		if "results" in components:
 			self.results = []
+			self.recvRes = 0
 			
 		if "program" in components:
 			self.prog = ""
@@ -272,3 +274,4 @@ class threadManager():
 		self.running = False
 		for key in self.activeThreads:
 			self.activeThreads[key].cancel()
+		#Delete results?

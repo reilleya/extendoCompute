@@ -58,6 +58,7 @@ class connectionThread():
 			if d[0] == "results":
 				self.threadMan.logEvent("[Connection"+str(self.threadID)+"] Received results from "+str(len(d[1]))+" tasks from client")
 				self.results+=d[1]
+				self.threadMan.recvRes += len(d[1])
 				if len(self.results) == len(self.tasks):
 					self.threadMan.reportResults(self.results, self.threadID)
 					self.results = []
