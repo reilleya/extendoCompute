@@ -69,10 +69,12 @@ def controllerClientHandler(conn, addr):
 			conn.send(manager.inputs)
 			
 		if req[0] == "genTasks":
+			manager.logEvent("[Controller] Generating tasks...")
 			manager.generateTasks()
 			conn.send(len(manager.tasks))
 		
 		if req[0] == "genBatches":
+			manager.logEvent("[Controller] Generating batches...")
 			manager.generateBatches()
 			conn.send(len(manager.batches))
 			
@@ -86,12 +88,15 @@ def controllerClientHandler(conn, addr):
 			manager.reset(req[1:])
 			
 		if req[0] == "pause":
+			manager.logEvent("[Controller] Ordering pause...")
 			manager.pause()
 		
 		if req[0] == "resume":
+			manager.logEvent("[Controller] Requesting resume...")
 			manager.resume()
 			
 		if req[0] == "cancel":
+			manager.logEvent("[Controller] Canceling current job...")
 			manager.cancel()
 		
 		if req[0] == "savelog":

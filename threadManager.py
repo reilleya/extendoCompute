@@ -150,7 +150,7 @@ class threadManager():
 		for bsn in range(0, len(self.batches)):
 			if self.batchStates[bsn][0] == "calc" and self.batchStates[bsn][1] == threadID:
 				self.batchStates[bsn][0] = "complete"
-				self.logEvent("Thread #"+str(threadID)+" reported results for batch "+str(bsn))
+				self.logEvent(" Thread #"+str(threadID)+" reported results for batch "+str(bsn))
 		
 	def setIterations(self, iters):#make a general function for this sort of thing!
 		self.iterations = iters
@@ -266,20 +266,23 @@ class threadManager():
 		self.running = False
 		for key in self.activeThreads:
 			self.activeThreads[key].pause()
+		manager.logEvent(" All threads paused")
 		
 	def resume(self):
 		self.running = True
 		for key in self.activeThreads:
 			self.activeThreads[key].resume()
+		manager.logEvent(" Job resumed")
 			
 	def cancel(self):
 		self.running = False
 		for key in self.activeThreads:
 			self.activeThreads[key].cancel()
 		#Delete results?
+		manager.logEvent(" All threads stopped. Job canceled.")
 		
 	def saveLog(self, filename):
-		self.logEvent("Saving server log to "+filename)
+		self.logEvent(" Saving server log to "+filename)
 		f = open(filename, "w")
 		for line in self.log:
 			f.write(line+"\n")
