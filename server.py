@@ -15,6 +15,7 @@ def controllerClientHandler(conn, addr):
 			exiting = True
 			
 		if req[0] == "info":
+			manager.logEvent("[Controller] Sending status info to controller")
 			cl = []
 			for k,c in manager.activeThreads.items():
 				cl.append(c.generateStatusString())
@@ -92,6 +93,9 @@ def controllerClientHandler(conn, addr):
 			
 		if req[0] == "cancel":
 			manager.cancel()
+		
+		if req[0] == "savelog":
+			manager.saveLog(req[1])
 			
 	manager.logEvent("[Controller] Closed controller connection with "+addr)
 	conn.send("exit")

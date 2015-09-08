@@ -143,13 +143,14 @@ class threadManager():
 			thd.newProgram(name, prog)
 			
 	def reportResults(self, results, threadID):
-		#testmess = str(len(self.results))+"->"
+		testmess = str(len(self.results))+"->"
 		self.results += results
-		#testmess += str(len(self.results))
-		#self.logEvent(testmess)
+		testmess += str(len(self.results))
+		self.logEvent(testmess)
 		for bsn in range(0, len(self.batches)):
 			if self.batchStates[bsn][0] == "calc" and self.batchStates[bsn][1] == threadID:
 				self.batchStates[bsn][0] = "complete"
+				self.logEvent("Thread #"+str(threadID)+" reported results for batch "+str(bsn))
 		
 	def setIterations(self, iters):#make a general function for this sort of thing!
 		self.iterations = iters
@@ -241,6 +242,7 @@ class threadManager():
 			self.batchStates = []
 			self.startTime = 0
 			self.results = []
+			self.recvRes = 0
 			
 		if "results" in components:
 			self.results = []
@@ -275,3 +277,10 @@ class threadManager():
 		for key in self.activeThreads:
 			self.activeThreads[key].cancel()
 		#Delete results?
+		
+	def saveLog(self, filename):
+		self.logEvent("Saving server log to "+filename)
+		f = open(filename, "w")
+		for line in self.log:
+			f.write(line+"\n")
+		f.close()

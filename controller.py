@@ -7,7 +7,7 @@ command_help = {"exit":"Closes the controller", "stop":"Stops extendoCompute, an
 				"delInput":"'delInput <name>' Removes an input called <name>", "inputs":"Lists all inputs and their possible values", "genTasks":"Generates tasks based on the inputs and number of iterations", 
 				"genBatches":"Divides the tasks into batches", "batches":"Displays information about batches", "log":"'log #' Shows the last # log messages", "batchStatus":"Gives current information about batches", 
 				"reset":"'reset <feature1> <feature2> <feature#>' Resets a server property. <feature#> can be: \n\t\tall\n\t\tresults\n\t\tinputs\n\t\ttasks\n\t\tbatches\n\t\tprogram", 
-				"pause":"Pauses a running program", "resume":"Resumes a running program", "cancel":"Stops a running program"}
+				"pause":"Pauses a running program", "resume":"Resumes a running program", "cancel":"Stops a running program", "savelog":"'savelog -[l/r] <filename>' Saves the server log to <filename>, either [l]ocally on the\n\t\tcontroller or [r]emotely on the server"}
 
 ip = raw_input("IP>")
 if ip=="":
@@ -174,6 +174,19 @@ while i!="exit":
 		print "Available commands:"
 		for key in command_help:
 			print "\t"+key+": "+command_help[key]
+			
+	elif i[0:7] == "savelog": #combine with "log"?
+		p = i.split(" ")
+		if p[1] == "l":
+			conn.send(["info"])
+			d = conn.recv()
+			f = open(p[2], "w")
+			for l in d[1]:
+				f.write(l+"\n")
+			f.close()
+			
+		if p[1] == "r":
+			conn.send(["savelog", p[2]])
 	
 	#TODO: Tasks command			
 
