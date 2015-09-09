@@ -145,18 +145,12 @@ class threadManager():
 			thd.newProgram(name, prog)
 			
 	def reportResults(self, results, threadID):
-		testmess = str(len(self.results))+"->"
+		#testmess = str(len(self.results))+"->" I hope that I never need this again...
+		#testmess += str(len(self.results))
+		#self.logEvent(testmess)
 		self.results += results
-		testmess += str(len(self.results))
-		self.logEvent(testmess)
 		self.batchStates[self.activeThreads[threadID].batchnum][0] = "complete"
 		self.logEvent(" Thread #"+str(threadID)+" reported results for batch "+str(self.activeThreads[threadID].batchnum))
-		
-		#for bsn in range(0, len(self.batches)):
-		#	if self.batchStates[bsn][0] == "calc" and self.batchStates[bsn][1] == threadID:
-		#		self.batchStates[bsn][0] = "complete"
-		#		
-		#		break #7:16 PM, September 8th, 2015. Finally. Or not... 
 		
 	def setIterations(self, iters):#make a general function for this sort of thing!
 		self.iterations = iters
