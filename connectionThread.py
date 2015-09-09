@@ -111,6 +111,7 @@ class connectionThread():
 	def assignTasks(self, batchnum, tasks):
 		self.batchnum = batchnum
 		self.tasks = tasks
+		self.conn.send(["batch", batchnum])
 		self.conn.send(["tasks", tasks, "r"])
 	
 	def addTasks(self, tasks):

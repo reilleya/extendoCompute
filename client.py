@@ -34,6 +34,7 @@ def outputThread():
 			buff += "Progress:\n"
 			if state == "running":
 				buff += "\tRunning program: "+progname+"\n"
+				buff += "\tHandling batch "+str(batchnum)+"\n"
 				buff += "\tTask:\n"
 				buff += "\t\t"+useful.progressBar(ctask, ntasks, 90)+"\n\t\tTask: "+str(ctask)+"/"+str(ntasks)+"\n"
 				#buff += "\t\tCurrent: "+str(tasks[ctask])+"\n"
@@ -46,7 +47,7 @@ def outputThread():
 			time.sleep(0.1)
 	
 def runProg():
-	global state, ctask, results, log
+	global state, ctask, results, log, batchnum
 	while running:
 		if state == "running":
 			for task in tasks: #will this be OK if more tasks are added mid-loop?
@@ -59,14 +60,16 @@ def runProg():
 					logEvent("Sending a batch of 100 results")
 					conn.send(["results", results[-100:]])
 					logEvent("Sent!")
-					
+			
+			logEvent("Done with batch "+str(batchnum))
+			batchnum = None
 			state = "idle"
 			ctask = 0
+			logEvent("All tasks complete, sending final results...")
 			if len(tasks)%100!=0:
-				logEvent("All tasks complete, sending final results...")
 				conn.send(["results", results[-(len(results)%100):]])
 				logEvent("Sent a batch of "+str(len(results[-(len(results)%100):]))+" results")
-				results = []
+			results = []
 			
 			#print "Results: "+str(results)
 			
@@ -87,6 +90,7 @@ state = "idle"
 progname = ""
 prog = ""
 
+batchnum = None
 ntasks = 0
 ctask = 1
 tasks = []
@@ -120,6 +124,10 @@ while running:
 		logEvent("Received a new program ("+d[1]+")")
 		progname = d[1]
 		prog = d[2]
+		
+	if d[0] == "batch":
+		logEvent("Assigned batch number"+str(d[1]))
+		batchnum = d[1]
 		
 	if d[0] == "tasks":
 		logEvent("Received "+str(len(d[1]))+" new tasks, "+("appending to list of tasks"*(d[2]=="a"))+("replacing current list of tasks"*(d[2]=="r")))
