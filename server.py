@@ -59,7 +59,9 @@ def controllerClientHandler(conn, addr):
 			
 		if req[0] == "newInput":
 			manager.logEvent("[Controller] Adding a new input called "+req[1]+ " with "+str(len(req[2]))+" different values")
+			replace = not req[1] in manager.inputs
 			manager.addInput(req[1], req[2])
+			conn.send([req[1], replace, len(req[2])])
 			
 		if req[0] == "delInput":
 			manager.logEvent("[Controller] Deleting input named "+req[1])

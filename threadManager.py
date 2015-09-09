@@ -120,12 +120,6 @@ class threadManager():
 			self.startTime = time.time()
 		else:
 			self.logEvent(" Already running")
-			#for k,thd in self.activeThreads.items():
-			#	tempTasks = []
-			#	for i in range(0, self.iterations):
-			#		tempTasks.append({"in":random.randint(1,50)})
-			#	thd.assignTasks(tempTasks)
-			#	thd.run()
 	
 	def exit(self):
 		self.exiting = True

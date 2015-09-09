@@ -110,6 +110,8 @@ while i!="exit":
 			except:
 				values = [rawvalues]
 		conn.send(["newInput", name, values])
+		res = conn.recv()
+		print ("Added"*res[1])+("Updated"*(not res[1]))+" an input called "+res[0]+" with "+str(res[2])+" values" 
 		
 	elif i[0:8] == "delInput":
 		name = i[9:]

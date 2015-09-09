@@ -1,8 +1,8 @@
 from multiprocessing.connection import Client
 import threading, time, useful, os, sys
-	
+
 sys.stderr = open('clientErrors.txt','w')
-	
+
 def logEvent(event):
 	global log
 	log.append("["+time.strftime("%c")+"] "+str(event))
