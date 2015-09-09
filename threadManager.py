@@ -42,15 +42,17 @@ class threadManager():
 	def update(self):
 		while not self.exiting:
 			if self.running:
-				for ctn in range(0, len(self.activeThreads)): #self.activeThreads is a dict... not a list. Why not loop over the keys?
+				for ctn in self.activeThreads: #self.activeThreads is a dict... not a list. Why not loop over the keys?
 					if self.activeThreads[ctn].state == "idle":
 						#self.logEvent(" "+str(ctn)+" is idle!")
 						for bsn in range(0, len(self.batchStates)):
 							if self.batchStates[bsn][0] == "waiting":
-								self.batchStates[bsn] = ["calc", ctn]
-								self.activeThreads[ctn].assignTasks(bsn, self.batches[bsn])
-								self.activeThreads[ctn].run()
-								break
+								if self.activeThreads[ctn].batchnum == None:
+									self.batchStates[bsn] = ["calc", ctn]
+									self.logEvent(" Assigning batch "+str(bsn)+" to thread "+str(ctn))
+									self.activeThreads[ctn].assignTasks(bsn, self.batches[bsn])
+									self.activeThreads[ctn].run()
+									break
 					
 					if self.activeThreads[ctn].state == "connerror":
 						self.logEvent(" Thread "+str(ctn)+" is reporting connection problems, reallocating tasks")

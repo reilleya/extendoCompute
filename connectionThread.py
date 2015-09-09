@@ -10,7 +10,7 @@ class connectionThread():
 		self.program = ""
 		self.state = "idle"
 		self.ctask = 0
-		self.batchnum = -1
+		self.batchnum = None
 		self.tasks = tasks
 		self.results = []
 		self.conn = connection
@@ -62,7 +62,8 @@ class connectionThread():
 				if len(self.results) == len(self.tasks):
 					self.threadMan.reportResults(self.results, self.threadID)
 					self.results = []
-			
+					self.batchnum = None
+					
 		self.conn.close()
 				
 	def update(self):
@@ -102,8 +103,8 @@ class connectionThread():
 		
 	def run(self):
 		if self.programName != None:
-			self.conn.send(["run"])
 			self.state = "running" #ugly hack to make sure we don't get too many tasks at once
+			self.conn.send(["run"])
 			self.threadMan.logEvent("[Connection"+str(self.threadID)+"] Program started")
 		else:
 			self.threadMan.logEvent("[Connection"+str(self.threadID)+"] No program to start")
