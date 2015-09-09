@@ -1,6 +1,30 @@
 import os, sys, pickle
 from multiprocessing.connection import Client
 
+def checkFormat(command, format):
+	fsplit = format.split(" ")
+	csplit = command.split(" ")[1:]
+	if len(fsplit) == len(csplit):
+		for typecheck in range(0, len(fsplit)):
+			if fsplit[typecheck] in ["i", "n"]:
+				try:
+					test = float(csplit[typecheck])
+				except:
+					return False
+					
+				if fsplit[typecheck] == "i":
+					try: 
+						int(csplit[typecheck])
+					except:
+						return False
+						
+			if fsplit[typecheck] == "s":
+				pass
+				
+		return True
+	else:
+		return False
+
 command_help = {"exit":"Closes the controller", "stop":"Stops extendoCompute, and then closes the controller", "info":"Displays server status", "prog":"'prog <name>' Loads the python script <name> and distributes it to clients", 
 				"run":"Starts distributing batches of tasks to clients and running them", "disc":"'disc #' Disconnects client number #", "res":"'res [s[l/r]<filename>/d]' Displays (d) or saves (s) results. Saves to <filename> on the controller\n\t\tcomputer if (l), or on the server if (r)", "iters":"'iters #' Sets the number of iterations to run", 
 				"batchSize":"'batchSize #' Sets the size of each batch that will be generated", "newInput":"'newInput <name> <values>' Creates a new input called <name> that has possible values <values>", 
@@ -39,22 +63,28 @@ while i!="exit":
 			print "\t"+ct
 			
 	elif i[0:4] == "prog":
-		loc = i.split(" ")[1]
-		n = loc.split("/")[-1]
-		f = open(loc, "r")
-		c = f.read()
-		conn.send(["program", n,c])
+		if checkFormat(i, "s"):
+			loc = i.split(" ")[1]
+			n = loc.split("/")[-1]
+			f = open(loc, "r")
+			c = f.read()
+			conn.send(["program", n,c])
+		else:
+			print "Invalid Argument! This command takes one string (a file path) as an argument."
 		
 	elif i[0:3] == "run":
 		conn.send(["run"])
 		
 	elif i[0:4] == "disc":
-		conn.send(["disc", int(i.split(" ")[1])])
-		res = conn.recv()
-		if res == -1:
-			print "Attempted to close a non-existent connection"
+		if checkFormat(i, "i"):
+			conn.send(["disc", int(i.split(" ")[1])])
+			res = conn.recv()
+			if res == -1:
+				print "Attempted to close a non-existent connection"
+			else:
+				print "Closed connection #"+str(res)
 		else:
-			print "Closed connection #"+str(res)
+			print "Invalid argument! This command takes one integer as an argument."
 	
 	elif i[0:3] == "res":
 		if i[4] == "s":
@@ -74,14 +104,21 @@ while i!="exit":
 			print res
 		
 	elif i[0:5] == "iters":
-		conn.send(["iterations", int(i.split(" ")[1])])
-		print "Set iteration count to "+i.split(" ")[1]
+		if checkFormat(i, "i"):
+			conn.send(["iterations", int(i.split(" ")[1])])
+			print "Set iteration count to "+i.split(" ")[1]
+		else:
+			print "Invalid argument! This command takes one integer as an argument."	
 	
 	elif i[0:9] == "batchSize":
-		conn.send(["batchsize", int(i.split(" ")[1])])
-		print "Set batch size to "+i.split(" ")[1]
+		if checkFormat(i, "i"):
+			conn.send(["batchsize", int(i.split(" ")[1])])
+			print "Set batch size to "+i.split(" ")[1]
+		else:
+			print "Invalid argument! This command takes one integer as an argument."
 		
 	elif i[0:8] == "newInput":
+		#checkFormat is not ready for this kind of task...
 		args = i[9:]
 		name = args[:args.index(" ")]
 		rawvalues = args[args.index(" ")+1:]
@@ -114,8 +151,11 @@ while i!="exit":
 		print ("Added"*res[1])+("Updated"*(not res[1]))+" an input called "+res[0]+" with "+str(res[2])+" values" 
 		
 	elif i[0:8] == "delInput":
-		name = i[9:]
-		conn.send(["delInput", name])
+		if checkFormat(i, "s"):
+			name = i[9:] #Find out if an input by that name exists! Error if not...
+			conn.send(["delInput", name])
+		else:
+			print "Invalid argument! This function takes one string (an input name) as an argument"
 		
 	elif i[0:6] == "inputs":
 		conn.send(["inputs"])
@@ -147,12 +187,15 @@ while i!="exit":
 						batches[bnum].remove(t)
 	
 	elif i[0:3] == "log":
-		conn.send(["info"])
-		d = conn.recv()
-		events = d[1][-(int(i[4:])):]
-		events.reverse()
-		for event in events:
-			print event
+		if checkFormat(i, "i"):
+			conn.send(["info"])
+			d = conn.recv()
+			events = d[1][-(int(i[4:])):]
+			events.reverse()
+			for event in events:
+				print event
+		else:
+			print "Invalid argument! This function takes one integer as an argument"
 	
 	elif i[0:11] == "batchStatus":
 		conn.send(["batchStatus"])
@@ -163,13 +206,13 @@ while i!="exit":
 		toreset = i.split(" ")[1:]
 		conn.send(["reset"]+toreset)
 	
-	elif i[0:5] == "pause":
+	elif i[0:5] == "pause": #Tell the client if this suceeds
 		conn.send(["pause"])
 	
-	elif i[0:6] == "resume":
+	elif i[0:6] == "resume": #Tell the client if this suceeds
 		conn.send(["resume"])
 	
-	elif i[0:6] == "cancel":
+	elif i[0:6] == "cancel": #Tell the client if this suceeds
 		conn.send(["cancel"])
 	
 	elif i[0:4] == "help":
@@ -178,17 +221,21 @@ while i!="exit":
 			print "\t"+key+": "+command_help[key]
 			
 	elif i[0:7] == "savelog": #combine with "log"?
-		p = i.split(" ")
-		if p[1] == "l":
-			conn.send(["info"])
-			d = conn.recv()
-			f = open(p[2], "w")
-			for l in d[1]:
-				f.write(l+"\n")
-			f.close()
-			
-		if p[1] == "r":
-			conn.send(["savelog", p[2]])
+		if checkFormat(i, "s s") and i[8] in ["l", "r"]:
+			p = i.split(" ")
+			if p[1] == "l":
+				conn.send(["info"])
+				d = conn.recv()
+				f = open(p[2], "w")
+				for l in d[1]:
+					f.write(l+"\n")
+				f.close()
+				print "Saved log to "+p[2]
+				
+			if p[1] == "r":
+				conn.send(["savelog", p[2]])
+		else:
+			print "Invalid argument(s)! This function takes two strings (a mode and a filename) as arguments."
 	
 	#TODO: Tasks command			
 
