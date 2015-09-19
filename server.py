@@ -90,16 +90,28 @@ def controllerClientHandler(conn, addr):
 			manager.reset(req[1:])
 			
 		if req[0] == "pause":
-			manager.logEvent("[Controller] Ordering pause...")
-			manager.pause()
+			manager.logEvent("[Controller] Ordering program to pause...")
+			res = manager.pause()
+			if res:
+				conn.send("paused")
+			else:
+				conn.send("noprog")
 		
 		if req[0] == "resume":
 			manager.logEvent("[Controller] Requesting resume...")
-			manager.resume()
+			res = manager.resume()
+			if res:
+				conn.send("resumed")
+			else:
+				conn.send("noprog")
 			
 		if req[0] == "cancel":
 			manager.logEvent("[Controller] Canceling current job...")
-			manager.cancel()
+			res = manager.cancel()
+			if res:
+				conn.send("canceled")
+			else:
+				conn.send("noprog")
 		
 		if req[0] == "savelog":
 			manager.saveLog(req[1])

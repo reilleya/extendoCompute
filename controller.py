@@ -86,7 +86,7 @@ while i!="exit":
 		else:
 			print "Invalid argument! This command takes one integer as an argument."
 	
-	elif i[0:3] == "res":
+	elif i[0:4] == "res ":
 		if i[4] == "s":
 			if i[6] == "l":
 				conn.send(["results"])
@@ -206,14 +206,35 @@ while i!="exit":
 		toreset = i.split(" ")[1:]
 		conn.send(["reset"]+toreset)
 	
-	elif i[0:5] == "pause": #Tell the client if this suceeds
+	elif i[0:5] == "pause":
 		conn.send(["pause"])
+		result = conn.recv()
+		if result == "paused":
+			print "Program paused."
+		elif result == "noprog":
+			print "No running program to pause."
+		else:
+			print "Unknown error."
 	
-	elif i[0:6] == "resume": #Tell the client if this suceeds
+	elif i[0:6] == "resume":
 		conn.send(["resume"])
+		result = conn.recv()
+		if result == "resumed":
+			print "Program resumed"
+		elif result == "noprog":
+			print "No paused program to resume"
+		else:
+			print "Unknown error"
 	
-	elif i[0:6] == "cancel": #Tell the client if this suceeds
+	elif i[0:6] == "cancel": #Tell the client if this succeeds
 		conn.send(["cancel"])
+		result = conn.recv()
+		if result == "canceled":
+			print "Program canceled"
+		elif result == "noprog":
+			print "No program to cancel"
+		else:
+			print "Unknown error"
 	
 	elif i[0:4] == "help":
 		print "Available commands:"

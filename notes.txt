@@ -43,4 +43,36 @@ TODO:
 	
 	
 	Post processing? (like to save results to an image) ->
-	Pipelines!
+	Pipelines! No... scripts
+		Scripts that can be run at any time
+		Can be set to be automatically run after all results are in, 
+			after each batch is finished, 
+			after tasks are generated to make batches, 
+			or at the start of execution to generate the tasks themselves.
+
+
+		Access to internal structures
+			Tasks
+			Batches
+			Inputs
+			Results
+
+		Uses:
+			Generating tasks for a new execution
+			Saving results in a very specific way when it is useful to save in a format other than the original python datastructure
+			
+		Command:
+			addScript <name> <file>
+				Loads the script in <file> and stores it under <name>
+			
+			delScript <name>
+			
+			addTrigger <name> <trigger>
+				Sets the script <name> to be triggered by the event <trigger>
+				Option for triggers:
+					batching
+					batchCompletion
+					completion
+
+			delTriggers <name>
+				Removes all triggers from the script <name>

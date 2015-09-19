@@ -11,6 +11,7 @@ class threadManager():
 		
 		self.exiting = False
 		self.running = False
+		self.paused = False
 		
 		self.log = []
 		
@@ -257,23 +258,38 @@ class threadManager():
 			self.batchStates = []
 			
 	def pause(self):
-		self.running = False
-		for key in self.activeThreads:
-			self.activeThreads[key].pause()
-		manager.logEvent(" All threads paused")
+		if self.running:
+			self.running = False
+			self.paused = True
+			for key in self.activeThreads:
+				self.activeThreads[key].pause()
+			self.logEvent(" All threads paused")
+			return True
+		else:
+			self.logEvent(" No program running...")
+			return False
 		
 	def resume(self):
-		self.running = True
-		for key in self.activeThreads:
-			self.activeThreads[key].resume()
-		manager.logEvent(" Job resumed")
+		if self.paused:
+			self.running = True
+			self.paused = False
+			for key in self.activeThreads:
+				self.activeThreads[key].resume()
+			self.logEvent(" Job resumed")
+			return True
+		else:
+			return False
 			
 	def cancel(self):
-		self.running = False
-		for key in self.activeThreads:
-			self.activeThreads[key].cancel()
-		#Delete results?
-		manager.logEvent(" All threads stopped. Job canceled.")
+		if self.running:
+			self.running = False
+			for key in self.activeThreads:
+				self.activeThreads[key].cancel()
+			#Delete results?
+			manager.logEvent(" All threads stopped. Job canceled.")
+			return True
+		else:
+			return False
 		
 	def saveLog(self, filename):
 		self.logEvent(" Saving server log to "+filename)
